@@ -1,16 +1,20 @@
-import cadquery as cq
+from ocp_vscode import show, show_object, reset_show, set_port, set_defaults, get_defaults
+set_port(3939)
+from build123d import *
 
-front_th = 2.0
-diffusor_th = 0.4 #- 0.4
+front_th = 2.0 # thickness without diffusor
+diffusor_th = 0.4 # diffusor thickness
 
-led_dx = 16.6
-led_dy = 18.94
+led_dx = 16.6  # x distance of LEDs
+led_dy = 18.94 # Y distance of LEDs
 
-cnt_x = 3 # 11
-cnt_y = 3 # 10
+cnt_x = 11
+cnt_y = 10
 
-size_x = 240 # 2*border + (cnt_x - 1) * led_dx
-size_y = 240 # 2*border + (cnt_y - 1) * led_dy
+border = 42
+
+size_x = 2*border + (cnt_x - 1) * led_dx
+size_y = 2*border + (cnt_y - 1) * led_dy
 
 wall_th = 1.2
 
@@ -33,41 +37,42 @@ letters = iter(list(
     "SIEBENZWÖLF" + 
     "ZEHNEUNKUHR" ))
 
-# sunken letters
-result = (cq.Workplane("XY")
-          .box(size_y, size_x, front_th + diffusor_th)
-          .faces(">Z").workplane()
-          .rarray(led_dy, led_dx, cnt_y, cnt_x)
-          .eachpoint(lambda loc: (cq.Workplane().workplane(offset=-diffusor_th)
-                 .text(next(letters), 10, -front_th)
-                 .rotate((0, 0, 1),(0, 0, 2), 90)
-                 .val().moved(loc)), combine='s')
-    )
+# Sunken letters and holes
+result = Box(size_y, size_x, front_th + diffusor_th,
+             align=(Align.CENTER, Align.CENTER, Align.MAX))
+txt_pl = Plane(result.faces().sort_by(Axis.Z).last)
+# Letters
+letter_sk = Sketch() + [
+    txt_pl * loc * Text(next(letters), 10, rotation=90)
+    for loc in GridLocations(led_dy, led_dx, cnt_y, cnt_x)
+]
+result -= extrude(letter_sk, -front_th)
 
-# holes for corner LEDs
-result = (result.rarray(cled_dy, cled_dx, 2, 2)
-          .eachpoint(lambda loc: (cq.Workplane().workplane(offset=-diffusor_th)
-                                  .circle(corner_led_dia/2).extrude(-front_th)
-                                  .val().moved(loc)), combine='s')
-)
+# Holes for corner LEDs
+holes_sk = Sketch() + [
+    txt_pl * loc * Circle(corner_led_dia/2)
+    for loc in GridLocations(cled_dy, cled_dx, 2, 2)
+]
+result -= extrude(letter_sk + holes_sk, -front_th)
 
-
-# boxes for letter LEDs
-result = (result.faces("<Z").workplane()
-          .rect(wall_th + cnt_y * led_dy, wall_th + cnt_x * led_dx)
-          .rarray(led_dy, led_dx, cnt_y, cnt_x)
-          .rect(led_dy - wall_th, led_dx - wall_th)
-          .extrude(grid_height)
-)
+result = result.mirror(Plane.ZX)
+# boxes for letters
+lboxes_sk = Rectangle(wall_th + cnt_y * led_dy, wall_th + cnt_x * led_dx,
+                         align=(Align.CENTER, Align.CENTER, Align.MIN)) - [
+    loc * Rectangle(led_dy - wall_th, led_dx - wall_th)
+    for loc in GridLocations(led_dy, led_dx, cnt_y, cnt_x)
+]
+result += extrude(lboxes_sk, grid_height)
 
 # boxes for corner LEDs
-result = (result.rarray(cled_dy, cled_dx, 2, 2)
-          .rect(led_dy - wall_th, led_dx - wall_th) # .extrude(10.0)
-          .rect(led_dy + wall_th, led_dx + wall_th)
-          .extrude(grid_height)
-)
+cboxes_sk = Sketch() + [
+    loc * Rectangle(led_dy + wall_th, led_dx + wall_th) 
+    - loc * Rectangle(led_dy - wall_th, led_dx - wall_th)
+    for loc in GridLocations(cled_dy, cled_dx, 2, 2)
+]
+result += extrude(cboxes_sk, grid_height)
 
-log(f"size_x = {size_x}")
-log(f"size_y = {size_y}")
+print(f"size_x = {size_x}") 
+print(f"size_y = {size_y}")
 
 show_object(result)
