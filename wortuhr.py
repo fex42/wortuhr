@@ -1,4 +1,7 @@
-import cadquery as cq
+from ocp_vscode import show, show_object, reset_show, set_port, set_defaults, get_defaults
+set_port(3939)
+
+from cadquery import *
 
 front_th = 2.0
 diffusor_th = 0.4 #- 0.4
@@ -34,11 +37,11 @@ letters = iter(list(
     "ZEHNEUNKUHR" ))
 
 # sunken letters
-result = (cq.Workplane("XY")
+result = (Workplane("XY")
           .box(size_y, size_x, front_th + diffusor_th)
           .faces(">Z").workplane()
           .rarray(led_dy, led_dx, cnt_y, cnt_x)
-          .eachpoint(lambda loc: (cq.Workplane().workplane(offset=-diffusor_th)
+          .eachpoint(lambda loc: (Workplane().workplane(offset=-diffusor_th)
                  .text(next(letters), 10, -front_th)
                  .rotate((0, 0, 1),(0, 0, 2), 90)
                  .val().moved(loc)), combine='s')
@@ -46,7 +49,7 @@ result = (cq.Workplane("XY")
 
 # holes for corner LEDs
 result = (result.rarray(cled_dy, cled_dx, 2, 2)
-          .eachpoint(lambda loc: (cq.Workplane().workplane(offset=-diffusor_th)
+          .eachpoint(lambda loc: (Workplane().workplane(offset=-diffusor_th)
                                   .circle(corner_led_dia/2).extrude(-front_th)
                                   .val().moved(loc)), combine='s')
 )
@@ -67,7 +70,7 @@ result = (result.rarray(cled_dy, cled_dx, 2, 2)
           .extrude(grid_height)
 )
 
-log(f"size_x = {size_x}")
-log(f"size_y = {size_y}")
+logger.info(f"size_x = {size_x}")
+logger.info(f"size_y = {size_y}")
 
-show_object(result)
+show(result)
