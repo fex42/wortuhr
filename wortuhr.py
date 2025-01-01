@@ -29,6 +29,8 @@ font="FreeSans"
 font_style = FontStyle.BOLD
 
 mnut_dia = 4.6
+mnut_height = 4.2
+mnut_screw_dia = 4.1
 
 wall_th = 1.0 # wall thickness
 border = 0.4 + wall_th # border size (including tolerance for back)
@@ -180,11 +182,17 @@ mn_sk = Sketch() + [
     plane * loc * Circle(mnut_dia/2)
     for loc in mn_locs
 ] 
-back -= extrude(mn_sk, -10)
+back -= extrude(mn_sk, -mnut_height)
+mn_sk = Sketch() + [
+    plane * loc * Circle(mnut_screw_dia/2)
+    for loc in mn_locs
+] 
+back -= extrude(mn_sk, -mnut_height*2)
+
+# cable hole
 
 
 # outer wall
-
 wall_sk = (Rectangle(size_y, size_x) - 
     Rectangle(size_y - 2*wall_th, size_x - 2*wall_th))
 back += extrude(wall_sk, mag_dep+grid_height)
