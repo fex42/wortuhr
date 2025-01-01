@@ -10,8 +10,8 @@ diffusor_th = 0.4 # diffusor thickness
 led_dx = 16.6  # x distance of LEDs
 led_dy = 18.94 # Y distance of LEDs
 
-cnt_x = 6 # 11 # number of letters in a row
-cnt_y = 5 # 10 # number of letter rows
+cnt_x = 3 # 11 # number of letters in a row
+cnt_y = 2 # 10 # number of letter rows
 
 grid_height = 10.0 # grid height
 corner_led_dia = 3 # diameter of corner/minute LED hole
@@ -127,11 +127,6 @@ front -= extrude(mag_sk, -mag_dep)
 print(f"size_x = {size_x}") 
 print(f"size_y = {size_y}")
 
-#show_object(front)
-filename = "wortuhr-front"
-export_step(front, f"{filename}.step")
-export_stl(front, f"{filename}.stl")
-
 ##########################################################
 # Back
 ##########################################################
@@ -190,7 +185,11 @@ mn_sk = Sketch() + [
 back -= extrude(mn_sk, -mnut_height*2)
 
 # cable hole
-
+cab_sk = Sketch() + [
+    loc * Rectangle(5,4)
+    for loc in GridLocations(mag_dy-10, 24, 2, 2)
+]
+back -= extrude(cab_sk, -10)
 
 # outer wall
 wall_sk = (Rectangle(size_y, size_x) - 
@@ -202,3 +201,6 @@ show(front.move(Location(Vector(size_x + 20, 0))), back)
 filename = "wortuhr-front"
 export_step(front, f"{filename}.step")
 export_stl(front, f"{filename}.stl")
+filename = "wortuhr-back"
+export_step(back, f"{filename}.step")
+export_stl(back, f"{filename}.stl")
