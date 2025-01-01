@@ -10,8 +10,8 @@ diffusor_th = 0.4 # diffusor thickness
 led_dx = 16.6  # x distance of LEDs
 led_dy = 18.94 # Y distance of LEDs
 
-cnt_x = 11 # number of letters in a row
-cnt_y = 10 # number of letter rows
+cnt_x = 6 # 11 # number of letters in a row
+cnt_y = 5 # 10 # number of letter rows
 
 grid_height = 10.0 # grid height
 corner_led_dia = 3 # diameter of corner/minute LED hole
@@ -27,6 +27,8 @@ led_stripe_h = 2.0
 font_size = 12
 font="FreeSans"
 font_style = FontStyle.BOLD
+
+mnut_dia = 4.6
 
 wall_th = 1.0 # wall thickness
 border = 0.4 + wall_th # border size (including tolerance for back)
@@ -143,7 +145,6 @@ mag_sk = Sketch() + [
 back += extrude(mag_sk, mag_dep)
 
 # letter LED stripes
-
 base_sk = Rectangle(cnt_y * led_dy, cnt_x * led_dx)
 back += extrude(base_sk, mag_dep)
 
@@ -172,6 +173,14 @@ c1g_sk += c1g_sk.mirror(Plane.YZ)
 
 back += extrude(c1_sk, mag_dep)
 back -= extrude(c1g_sk, -led_stripe_h/4)
+
+# melting nut holes
+mn_locs = GridLocations((cnt_y-2) * led_dy, 40, 2, 2)
+mn_sk = Sketch() + [
+    plane * loc * Circle(mnut_dia/2)
+    for loc in mn_locs
+] 
+back -= extrude(mn_sk, -10)
 
 
 # outer wall
