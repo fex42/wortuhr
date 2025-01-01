@@ -34,6 +34,9 @@ mag_dep = 3.8
 mag_dx = (cnt_x + 1) * led_dx
 mag_dy = (cnt_y + 1) * led_dy
 
+led_stripe_w = 10.0
+led_stripe_h = 2.0
+
 letters = iter(list(
      "1234567890A" +
 #    "ESKISTAFÜNF" + 
@@ -138,11 +141,11 @@ plane = Plane.XY.offset(mag_dep)
 cs = plane * Circle(10)
 
 stripes_sk = Sketch() + [
-    plane * loc * Rectangle(10.2, cnt_x * led_dx)
+    plane * loc * Rectangle(led_stripe_w + 0.2, cnt_x * led_dx)
     for loc in GridLocations(led_dy, led_dx, cnt_y, 1)
 ]
 
-back -= extrude(stripes_sk, -0.5)
+back -= extrude(stripes_sk, -led_stripe_h)
 
 # corner LEDs
 
