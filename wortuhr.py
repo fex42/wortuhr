@@ -155,7 +155,7 @@ stripes_sk = Sketch() + [
     for loc in GridLocations(led_dy, led_dx, cnt_y, 1)
 ]
 
-back -= extrude(stripes_sk, -led_stripe_h)
+back -= extrude(stripes_sk, -led_stripe_h/4)
 
 # corner LEDs
 c1_loc = Location(Vector((cled_dy-cled_offset)/2, (cled_dx-cled_offset)/2))
@@ -171,7 +171,7 @@ c1g_sk += c1g_sk.mirror(Plane.XZ)
 c1g_sk += c1g_sk.mirror(Plane.YZ)
 
 back += extrude(c1_sk, mag_dep)
-back -= extrude(c1g_sk, -led_stripe_h)
+back -= extrude(c1g_sk, -led_stripe_h/4)
 
 
 # outer wall
