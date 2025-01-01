@@ -2,7 +2,8 @@ from ocp_vscode import show, show_object, reset_show, set_port, set_defaults, ge
 set_port(3939)
 from build123d import *
 
-front_th = 2.0 # thickness without diffusor
+front_th = 1.2 # thickness without diffusor
+back_th = front_th # thickness of back
 diffusor_th = 0.4 # diffusor thickness
 
 led_dx = 16.6  # x distance of LEDs
@@ -11,7 +12,7 @@ led_dy = 18.94 # Y distance of LEDs
 cnt_x = 2
 cnt_y = 2
 
-wall_th = 1.2
+wall_th = 1.0
 border = 0.2 + wall_th
 
 size_x = 2*border + (cnt_x + 2) * led_dx + wall_th
@@ -24,7 +25,11 @@ grid_height = 10.0
 
 corner_led_dia = 3
 
-mag_dia = 8.2
+font_size = 12
+font="FreeSans"
+font_style = FontStyle.BOLD
+
+mag_dia = 8.3
 mag_dep = 3.8
 mag_dx = (cnt_x + 1) * led_dx
 mag_dy = (cnt_y + 1) * led_dy
@@ -42,6 +47,11 @@ letters = iter(list(
 #    "SIEBENZWÖLF" + 
     "ZEHNEUNKUHR" ))
 
+
+##########################################################
+# Front
+##########################################################
+
 # Sunken letters and holes
 front = Box(size_y, size_x, front_th + diffusor_th,
              align=(Align.CENTER, Align.CENTER, Align.MAX))
@@ -49,7 +59,7 @@ txt_pl = Plane(front.faces().sort_by(Axis.Z).last)
 
 # Letters
 letter_sk = Sketch() + [
-    txt_pl * loc * Text(next(letters), 10, rotation=90)
+    txt_pl * loc * Text(next(letters), font_size, font=font, font_style=font_style, rotation=90)
     for loc in GridLocations(led_dy, led_dx, cnt_y, cnt_x)
 ]
 front -= extrude(letter_sk, -front_th)
@@ -79,7 +89,7 @@ cboxes_sk = Sketch() + [
 front += extrude(cboxes_sk, grid_height)
 
 
-# magnet sockets
+# magnet connectors
 mag_locations = Locations(
     (-mag_dy/2 , 0),
     (+mag_dy/2 , 0),
@@ -103,7 +113,40 @@ front -= extrude(mag_sk, -mag_dep)
 print(f"size_x = {size_x}") 
 print(f"size_y = {size_y}")
 
-show_object(front)
+#show_object(front)
+
+##########################################################
+# Back
+##########################################################
+
+# magnet connectors
+back = Box(size_y, size_x, back_th, 
+           align=(Align.CENTER, Align.CENTER, Align.MAX))
+mag_sk = Sketch() + [
+    loc * (Rectangle(mag_dia + 2*wall_th, mag_dia + 2*wall_th) -
+           Circle(mag_dia/2))
+    for loc in mag_locations
+]
+back += extrude(mag_sk, mag_dep)
+
+# letter LED stripes
+
+base_sk = Rectangle(cnt_y * led_dy, cnt_x * led_dx)
+back += extrude(base_sk, mag_dep)
+
+plane = Plane.XY.offset(mag_dep)
+cs = plane * Circle(10)
+
+stripes_sk = Sketch() + [
+    plane * loc * Rectangle(10.2, cnt_x * led_dx)
+    for loc in GridLocations(led_dy, led_dx, cnt_y, 1)
+]
+
+back -= extrude(stripes_sk, -0.5)
+
+# corner LEDs
+
+show(back)
 
 filename = "wortuhr-front"
 export_step(front, f"{filename}.step")
