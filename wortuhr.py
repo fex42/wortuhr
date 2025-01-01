@@ -1,6 +1,7 @@
 from ocp_vscode import show, show_object, reset_show, set_port, set_defaults, get_defaults
 set_port(3939)
 from build123d import *
+from math import *
 
 front_th = 1.2 # thickness without diffusor
 back_th = front_th # thickness of back
@@ -9,47 +10,52 @@ diffusor_th = 0.4 # diffusor thickness
 led_dx = 16.6  # x distance of LEDs
 led_dy = 18.94 # Y distance of LEDs
 
-cnt_x = 2
-cnt_y = 2
+cnt_x = 11 # number of letters in a row
+cnt_y = 10 # number of letter rows
 
-wall_th = 1.0
-border = 0.2 + wall_th
+grid_height = 10.0 # grid height
+corner_led_dia = 3 # diameter of corner/minute LED hole
 
-size_x = 2*border + (cnt_x + 2) * led_dx + wall_th
-size_y = 2*border + (cnt_y + 2) * led_dy + wall_th
-
-cled_dx = led_dx * (cnt_x + 1)
-cled_dy = led_dy * (cnt_y + 1)
-
-grid_height = 10.0
-
-corner_led_dia = 3
-
-font_size = 12
-font="FreeSans"
-font_style = FontStyle.BOLD
-
-mag_dia = 8.3
-mag_dep = 3.8
-mag_dx = (cnt_x + 1) * led_dx
-mag_dy = (cnt_y + 1) * led_dy
+# magnets joining back and front
+mag_dia = 8.3 # diameter of magnet hole
+mag_dep = 3.8 # depth of magnet hole
 
 led_stripe_w = 10.0
 led_stripe_h = 2.0
 
+# font parameters for letters
+font_size = 12
+font="FreeSans"
+font_style = FontStyle.BOLD
+
+wall_th = 1.0 # wall thickness
+border = 0.4 + wall_th # border size (including tolerance for back)
+
+# X/Y size over all
+size_x = 2*border + (cnt_x + 2) * led_dx + wall_th
+size_y = 2*border + (cnt_y + 2) * led_dy + wall_th
+
+# X/Y corner LED distance
+cled_dx = led_dx * (cnt_x + 1)
+cled_dy = led_dy * (cnt_y + 1)
+cled_offset = 3 # X/Y offset of corner led to middle (LED, not hole)
+
+mag_dx = (cnt_x + 1) * led_dx
+mag_dy = (cnt_y + 1) * led_dy
+
 letters = iter(list(
-     "1234567890A" +
-#    "ESKISTAFÜNF" + 
-#    "ZEHNZWANZIG" + 
-#    "DREIVIERTEL" + 
-#    "VORFUNKNACH" + 
-#    "HALBAELFÜNF" + 
-#    "EINSDCWZWEI" + 
-#    "DREIAUJVIER" + 
-#    "SECHSNLACHT" + 
-#    "SIEBENZWÖLF" + 
+    "ESKISTAFÜNF" + 
+    "ZEHNZWANZIG" + 
+    "DREIVIERTEL" + 
+    "VORFUNKNACH" + 
+    "HALBAELFÜNF" + 
+    "EINSDCWZWEI" + 
+    "DREIAUJVIER" + 
+    "SECHSNLACHT" + 
+    "SIEBENZWÖLF" + 
     "ZEHNEUNKUHR" ))
 
+# please note that X/Y is swapped below because of the order GridLocations are iterated
 
 ##########################################################
 # Front
@@ -83,11 +89,12 @@ lboxes_sk = Rectangle(wall_th + cnt_y * led_dy, wall_th + cnt_x * led_dx,
 ]
 front += extrude(lboxes_sk, grid_height)
 
+corner_led_locations = GridLocations(cled_dy, cled_dx, 2, 2)
 # boxes for corner LEDs
 cboxes_sk = Sketch() + [
     loc * Rectangle(led_dy + wall_th, led_dx + wall_th) 
     - loc * Rectangle(led_dy - wall_th, led_dx - wall_th)
-    for loc in GridLocations(cled_dy, cled_dx, 2, 2)
+    for loc in corner_led_locations
 ]
 front += extrude(cboxes_sk, grid_height)
 
@@ -117,6 +124,9 @@ print(f"size_x = {size_x}")
 print(f"size_y = {size_y}")
 
 #show_object(front)
+filename = "wortuhr-front"
+export_step(front, f"{filename}.step")
+export_stl(front, f"{filename}.stl")
 
 ##########################################################
 # Back
@@ -148,8 +158,29 @@ stripes_sk = Sketch() + [
 back -= extrude(stripes_sk, -led_stripe_h)
 
 # corner LEDs
+c1_loc = Location(Vector((cled_dy-cled_offset)/2, (cled_dx-cled_offset)/2))
 
-show(back)
+ang = atan(cled_dx/cled_dy)*180/pi
+
+c1_sk = c1_loc * Rectangle(led_dx-2,led_stripe_w + 2).rotate(Axis.Z, -ang)
+c1_sk += c1_sk.mirror(Plane.XZ)
+c1_sk += c1_sk.mirror(Plane.YZ)
+
+c1g_sk = Plane.XY.offset(mag_dep) * c1_loc * Rectangle(led_dx-2,led_stripe_w).rotate(Axis.Z, -ang)
+c1g_sk += c1g_sk.mirror(Plane.XZ)
+c1g_sk += c1g_sk.mirror(Plane.YZ)
+
+back += extrude(c1_sk, mag_dep)
+back -= extrude(c1g_sk, -led_stripe_h)
+
+
+# outer wall
+
+wall_sk = (Rectangle(size_y, size_x) - 
+    Rectangle(size_y - 2*wall_th, size_x - 2*wall_th))
+back += extrude(wall_sk, mag_dep+grid_height)
+
+show(front.move(Location(Vector(size_x + 20, 0))), back)
 
 filename = "wortuhr-front"
 export_step(front, f"{filename}.step")
