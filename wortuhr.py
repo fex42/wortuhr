@@ -3,6 +3,7 @@ set_port(3939)
 from build123d import *
 from math import *
 
+tol = 0.2
 front_th = 1.2 # thickness without diffusor
 diffusor_th = 0.4 # diffusor thickness (first two layers of print in white)
 back_th = front_th # thickness of back
@@ -13,10 +14,10 @@ grid_height = 10.0 # grid height
 led_dx = 16.6  # x distance between LEDs on stripe
 led_dy = 18.94 # Y distance between stripes
 
-cnt_x = 8 # 11 # number of letters in a row
-cnt_y = 6 # 10 # number of letter rows
-#cnt_x = 11 # number of letters in a row
-#cnt_y = 10 # number of letter rows
+#cnt_x = 8 # 11 # number of letters in a row
+#cnt_y = 6 # 10 # number of letter rows
+cnt_x = 11 # number of letters in a row
+cnt_y = 10 # number of letter rows
 
 # X/Y corner LED distance
 corner_dx = 17
@@ -63,7 +64,7 @@ corner_led_dia = 3 # diameter of corner/minute LED hole
 mag_dia = 8.3 # diameter of magnet hole
 mag_dep = 3.8 # depth of magnet hole
 
-led_stripe_w = 10.0
+led_stripe_w = 10.2
 led_stripe_h = 2.0
 
 # font parameters for letters
@@ -84,7 +85,7 @@ box_y = cnt_y * led_dy + 2 * corner_dy + wall_th
 size_x = 2*border + box_x
 size_y = 2*border + box_y
 
-screw_box_size = mnut_dia + 3
+screw_box_size = mnut_dia + 4.2
 mag_dx = box_x - 2 * wall_th - screw_box_size
 mag_dy = box_y - 2 * wall_th - screw_box_size
 
@@ -131,7 +132,7 @@ front += extrude(cboxes_sk, grid_height - 1)
 
 # outer box wall
 outer_wall_sk = Rectangle(box_x, box_y) - Rectangle(box_x - 2 * wall_th, box_y - 2 * wall_th)
-front += extrude(outer_wall_sk, grid_height + 5)
+front += extrude(outer_wall_sk, grid_height + mag_dep + back_th + tol)
 
 # magnet connectors
 mag_locations = Locations(
@@ -160,87 +161,98 @@ solder_sk = Sketch() + [
 ]
 front -= extrude(solder_sk, -1)
 
+###########################################################
+## Back
+###########################################################
+
+back_x = box_x - 2 * wall_th - tol
+back_y = box_y - 2 * wall_th - tol
+
+# back plane
+back = Box(back_x, back_y, back_th, 
+           align=(Align.CENTER, Align.CENTER, Align.MAX))
+
+# magnet connectors
+mag_sk = Sketch() + [
+    loc * (Rectangle(screw_box_size - tol, screw_box_size - tol)
+           # -           Circle(mnut_screw_dia/2)
+           )
+    for loc in mag_locations
+]
+back += extrude(mag_sk, mag_dep)
+
+plane = Plane.XY.offset(-back_th)
+back -= plane * mag_locations * CounterSinkHole(radius= mnut_screw_dia/2,
+    counter_sink_radius = 4,
+    depth = back_th + mag_dep).mirror(Plane.XY)
+
+
+
+# letter LED stripes
+base_sk = Rectangle(cnt_x * led_dx, cnt_y * led_dy)
+back += extrude(base_sk, mag_dep)
+
+plane = Plane.XY.offset(mag_dep)
+#cs = plane * Circle(10)
+
+stripes_sk = Sketch() + [
+    plane * loc * Rectangle(cnt_x * led_dx, led_stripe_w)
+    for loc in GridLocations(led_dx, led_dy, 1, cnt_y)
+]
+back -= extrude(stripes_sk, -led_stripe_h/4)
+
+# corner LEDs
+cled_offset_x = 5
+cled_offset_y = 3
+c1_loc = Location(Vector((cled_dx-cled_offset_x)/2, (cled_dy-cled_offset_y)/2))
+
+ang = 45
+
+c1_sk = c1_loc * Rectangle(led_dx,led_stripe_w + 2).rotate(Axis.Z, -ang)
+c1_sk += c1_sk.mirror(Plane.XZ)
+c1_sk += c1_sk.mirror(Plane.YZ)
+
+c1g_sk = Plane.XY.offset(mag_dep) * c1_loc * Rectangle(led_dx,led_stripe_w).rotate(Axis.Z, -ang)
+c1g_sk += c1g_sk.mirror(Plane.XZ)
+c1g_sk += c1g_sk.mirror(Plane.YZ)
+
+back += extrude(c1_sk, mag_dep)
+back -= extrude(c1g_sk, -led_stripe_h/4)
+
+# melting 2 nut holes
+mn_hole_dx = 40
+nm_hole_dy = (cnt_y-2) * led_dy
+mn_locs = GridLocations(mn_hole_dx, nm_hole_dy, 2, 2)
+mn_sk = Sketch() + [
+    plane * loc * Circle(mnut_dia/2)
+    for loc in mn_locs
+] 
+back -= extrude(mn_sk, -mnut_height)
+mn_sk = Sketch() + [
+    plane * loc * Circle(mnut_screw_dia/2)
+    for loc in mn_locs
+] 
+back -= extrude(mn_sk, -mnut_height*2)
+
+# cable hole
+cab_sk = Sketch() + [
+    loc * Rectangle(4,5)
+    for loc in GridLocations(24, mag_dy - 15, 2, 2)
+]
+back -= extrude(cab_sk, -10)
+
 print(f"size_x = {size_x}") 
 print(f"size_y = {size_y}")
 print(f"box_x = {box_x}") 
 print(f"box_y = {box_y}")
+print(f"mn_hole_dx = {mn_hole_dx}")
+print(f"nm_hole_dy = {nm_hole_dy}")
 
-show(front)
+show(front.move(Location(Vector(0, size_y + 20))), back)
 
-###########################################################
-## Back
-###########################################################
-#
-## magnet connectors
-#back = Box(size_x, size_y, back_th, 
-#           align=(Align.CENTER, Align.CENTER, Align.MAX))
-#mag_sk = Sketch() + [
-#    loc * (Rectangle(mag_dia + 2*wall_th, mag_dia + 2*wall_th) -
-#           Circle(mag_dia/2))
-#    for loc in mag_locations
-#]
-#back += extrude(mag_sk, mag_dep)
-#
-## letter LED stripes
-#base_sk = Rectangle(cnt_x * led_dx, cnt_y * led_dy)
-#back += extrude(base_sk, mag_dep)
-#
-#plane = Plane.XY.offset(mag_dep)
-#cs = plane * Circle(10)
-#
-#stripes_sk = Sketch() + [
-#    plane * loc * Rectangle(led_stripe_w + 0.2, cnt_x * led_dx)
-#    for loc in GridLocations(led_dx, led_dy, cnt_x, 1)
-#]
-#
-#back -= extrude(stripes_sk, -led_stripe_h/4)
-#
-## corner LEDs
-#c1_loc = Location(Vector((cled_dx-cled_offset)/2, (cled_dy-cled_offset)/2))
-#
-#ang = atan(cled_dy/cled_dx)*180/pi
-#
-#c1_sk = c1_loc * Rectangle(led_dx-2,led_stripe_w + 2).rotate(Axis.Z, -ang)
-#c1_sk += c1_sk.mirror(Plane.XZ)
-#c1_sk += c1_sk.mirror(Plane.YZ)
-#
-#c1g_sk = Plane.XY.offset(mag_dep) * c1_loc * Rectangle(led_dx-2,led_stripe_w).rotate(Axis.Z, -ang)
-#c1g_sk += c1g_sk.mirror(Plane.XZ)
-#c1g_sk += c1g_sk.mirror(Plane.YZ)
-#
-#back += extrude(c1_sk, mag_dep)
-#back -= extrude(c1g_sk, -led_stripe_h/4)
-#
-## melting nut holes
-#mn_locs = GridLocations((cnt_x-2) * led_dx, 40, 2, 2)
-#mn_sk = Sketch() + [
-#    plane * loc * Circle(mnut_dia/2)
-#    for loc in mn_locs
-#] 
-#back -= extrude(mn_sk, -mnut_height)
-#mn_sk = Sketch() + [
-#    plane * loc * Circle(mnut_screw_dia/2)
-#    for loc in mn_locs
-#] 
-#back -= extrude(mn_sk, -mnut_height*2)
-#
-## cable hole
-#cab_sk = Sketch() + [
-#    loc * Rectangle(5,4)
-#    for loc in GridLocations(mag_dx-10, 24, 2, 2)
-#]
-#back -= extrude(cab_sk, -10)
-#
-## outer wall
-#wall_sk = (Rectangle(size_x, size_y) - 
-#    Rectangle(size_x - 2 * wall_th, size_y - 2 * wall_th))
-#back += extrude(wall_sk, mag_dep+grid_height)
-
-#show(front.move(Location(Vector(size_y + 20, 0))), back)
-
-#filename = "wortuhr-front"
-#export_step(front, f"{filename}.step")
-#export_stl(front, f"{filename}.stl")
-#filename = "wortuhr-back"
-#export_step(back, f"{filename}.step")
-#export_stl(back, f"{filename}.stl")
+filename = "wortuhr-front"
+export_step(front, f"{filename}.step")
+export_stl(front, f"{filename}.stl")
+filename = "wortuhr-back"
+export_step(back, f"{filename}.step")
+export_stl(back, f"{filename}.stl")
