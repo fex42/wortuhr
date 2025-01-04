@@ -119,7 +119,7 @@ lboxes_sk = Rectangle(wall_th + cnt_x * led_dx, wall_th + cnt_y * led_dy,
     loc * Rectangle(led_dx - wall_th, led_dy - wall_th)
     for loc in GridLocations(led_dx, led_dy, cnt_x, cnt_y)
 ]
-front += extrude(lboxes_sk, grid_height)
+front += extrude(lboxes_sk, grid_height-1)
 
 corner_led_locations = GridLocations(cled_dx, cled_dy, 2, 2)
 # boxes for corner LEDs
@@ -128,11 +128,11 @@ cboxes_sk = Sketch() + [
     - loc * Rectangle(corner_dx - wall_th, corner_dy - wall_th)
     for loc in corner_led_locations
 ]
-front += extrude(cboxes_sk, grid_height - 1)
+front += extrude(cboxes_sk, grid_height - 2)
 
 # outer box wall
 outer_wall_sk = Rectangle(box_x, box_y) - Rectangle(box_x - 2 * wall_th, box_y - 2 * wall_th)
-front += extrude(outer_wall_sk, grid_height + mag_dep + back_th + tol)
+front += extrude(outer_wall_sk, grid_height + mag_dep + back_th + 2)
 
 # magnet connectors
 mag_locations = Locations(
@@ -159,7 +159,7 @@ solder_sk = Sketch() + [
     top_grid_pl * loc * Rectangle(wall_th, led_stripe_w)
     for loc in GridLocations(cnt_x * led_dx, led_dy, 2, cnt_y)
 ]
-front -= extrude(solder_sk, -1)
+front -= extrude(solder_sk, -2)
 
 ###########################################################
 ## Back
@@ -174,12 +174,10 @@ back = Box(back_x, back_y, back_th,
 
 # magnet connectors
 mag_sk = Sketch() + [
-    loc * (Rectangle(screw_box_size - tol, screw_box_size - tol)
-           # -           Circle(mnut_screw_dia/2)
-           )
+    loc * Rectangle(screw_box_size - tol, screw_box_size - tol)
     for loc in mag_locations
 ]
-back += extrude(mag_sk, mag_dep)
+back += extrude(mag_sk, mag_dep + 1)
 
 plane = Plane.XY.offset(-back_th)
 back -= plane * mag_locations * CounterSinkHole(radius= mnut_screw_dia/2,
@@ -241,6 +239,15 @@ cab_sk = Sketch() + [
 ]
 back -= extrude(cab_sk, -10)
 
+###########################################################
+## Controller case base
+###########################################################
+ 
+back_height = 28.0
+
+cbase = Box(mn_hole_dx + 20, nm_hole_dy + 20, back_height,
+            align=[Align.CENTER, Align.CENTER, Align.MIN])
+
 print(f"size_x = {size_x}") 
 print(f"size_y = {size_y}")
 print(f"box_x = {box_x}") 
@@ -248,7 +255,10 @@ print(f"box_y = {box_y}")
 print(f"mn_hole_dx = {mn_hole_dx}")
 print(f"nm_hole_dy = {nm_hole_dy}")
 
-show(front.move(Location(Vector(0, size_y + 20))), back)
+show(front.move(Location(Vector(size_x + 20, size_y + 20))),
+     back.move(Location(Vector(size_x + 20, 0))),
+     cbase
+     )
 
 filename = "wortuhr-front"
 export_step(front, f"{filename}.step")
