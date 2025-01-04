@@ -24,7 +24,8 @@ corner_dx = 17
 corner_dy = 19
 cled_dx = led_dx * cnt_x + corner_dx
 cled_dy = led_dy * cnt_y + corner_dy
-cled_offset = 3 # X/Y offset of corner led to middle (LED, not hole)
+cled_offset_x = 5 # X offset of corner led to middle (LED, not hole)
+cled_offset_y = 3 # Y offset of corner led to middle (LED, not hole)
 
 class LetterGenerator:
     """A generator for the letters that respect the order of GridLocations"""
@@ -200,8 +201,6 @@ stripes_sk = Sketch() + [
 back -= extrude(stripes_sk, -led_stripe_h/4)
 
 # corner LEDs
-cled_offset_x = 5
-cled_offset_y = 3
 c1_loc = Location(Vector((cled_dx-cled_offset_x)/2, (cled_dy-cled_offset_y)/2))
 
 ang = 45
