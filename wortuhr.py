@@ -181,9 +181,9 @@ mag_sk = Sketch() + [
 back += extrude(mag_sk, mag_dep + 1)
 
 plane = Plane.XY.offset(-back_th)
-back -= plane * mag_locations * CounterSinkHole(radius= mnut_screw_dia/2,
-    counter_sink_radius = 4,
-    depth = back_th + mag_dep).mirror(Plane.XY)
+back -= plane * mag_locations * CounterBoreHole(radius= mnut_screw_dia/2,
+    counter_bore_radius = 3.1, counter_bore_depth=2,
+    depth = back_th + mag_dep + 2).mirror(Plane.XY)
 
 
 
