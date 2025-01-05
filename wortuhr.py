@@ -233,9 +233,10 @@ mn_sk = Sketch() + [
 back -= extrude(mn_sk, -mnut_height*2)
 
 # cable holes
+ch_loc = GridLocations(24, mag_dy - 24, 1, 2)
 cab_sk = Sketch() + [
     loc * Rectangle(6,4)
-    for loc in GridLocations(24, mag_dy - 24, 1, 2)
+    for loc in ch_loc
 ]
 back -= extrude(cab_sk, -10)
 
@@ -243,13 +244,61 @@ back -= extrude(cab_sk, -10)
 ## Controller case base
 ###########################################################
  
-back_height = 28.0
+case_height = 28.0
 
-case = Box(mn_hole_dx + 20, nm_hole_dy/2 + 20, back_height,
+# case outer size
+case_x = mn_hole_dx + 20
+case_y = nm_hole_dy/2 + 25
+case_wall_th = 1.6
+
+case = Box(case_x, case_y, case_height,
             align=[Align.CENTER, Align.MIN, Align.MIN])
 
 topf = case.faces().sort_by().last
-case = offset(case, amount=-2, openings=topf)
+case = offset(case, amount=-case_wall_th, openings=topf)
+
+# mount holes for case
+mn_sk = Sketch() + [
+    plane * loc * Circle(mnut_screw_dia/2)
+    for loc in mn_locs
+] 
+case -= extrude(mn_sk, -10)
+
+
+# hole for cable to LEDs
+cab_sk = Sketch() + [
+    plane * loc * Rectangle(6,4)
+    for loc in GridLocations(24, mag_dy - 24, 1, 2)
+]
+case -= extrude(cab_sk, -10)
+
+# USB-C Slot for power
+power_sk = Plane.XZ * Pos(0, case_height/2) * (SlotCenterToCenter(center_separation=8.0, height=4.0) + [
+    loc * Circle(1.45)
+    for loc in GridLocations(16.0, 0, 2, 1)
+])
+case -= extrude(power_sk, -case_wall_th) 
+
+# screw holees for fastening the cover
+cover_screw_dx = case_x - 2 * case_wall_th - screw_box_size
+cover_screw_dy = case_y - 2 * case_wall_th - screw_box_size
+
+cover_screw_pos = GridLocations(cover_screw_dx, cover_screw_dy, 2, 2)
+
+cover_screw_sk = Sketch() + [
+    loc * Rectangle(screw_box_size, screw_box_size)
+    for loc in cover_screw_pos
+]
+
+case += extrude(Plane.XY.move(Pos(0, case_y/2)) * cover_screw_sk, case_height - 3)
+
+cover_hole_sk = Sketch() + [
+    loc * Circle(mnut_screw_dia/2)
+    for loc in cover_screw_pos
+]
+case -= extrude(Plane.XY.offset(case_height - 3).move(Pos(0, case_y/2)) * cover_hole_sk, -mnut_height)
+
+
 
 print(f"size_x = {size_x}") 
 print(f"size_y = {size_y}")
@@ -262,7 +311,7 @@ print(f"mn_nut_height = {(nm_hole_dy-size_y)/2}")
 
 show(front.move(Location(Vector(size_x + 20, size_y + 20))),
      back.move(Location(Vector(size_x + 20, 0))),
-     case
+     case,
      )
 
 filename = "wortuhr-front"
