@@ -6,7 +6,7 @@ from math import *
 tol = 0.2
 front_th = 1.2 # thickness without diffusor
 diffusor_th = 0.4 # diffusor thickness (first two layers of print in white)
-back_th = front_th # thickness of back
+back_th = front_th + diffusor_th # thickness of back
 wall_th = 1.0 # wall thickness
 
 grid_height = 10.0 # grid height
@@ -77,6 +77,9 @@ mnut_dia = 4.6
 mnut_height = 4.2
 mnut_screw_dia = 4.1
 
+mn_hole_dx = 50
+nm_hole_dy = (cnt_y-2) * led_dy
+
 border = 0 # border size (including tolerance for back)
 
 box_x = cnt_x * led_dx + 2 * corner_dx + wall_th
@@ -114,6 +117,7 @@ holes_sk = Sketch() + [
 front -= extrude(letter_sk + holes_sk, -front_th)
 
 front = front.mirror(Plane.ZX)
+
 # boxes for letters
 lboxes_sk = Rectangle(wall_th + cnt_x * led_dx, wall_th + cnt_y * led_dy,
                          align=(Align.CENTER, Align.CENTER, Align.MIN)) - [
@@ -122,8 +126,8 @@ lboxes_sk = Rectangle(wall_th + cnt_x * led_dx, wall_th + cnt_y * led_dy,
 ]
 front += extrude(lboxes_sk, grid_height-1)
 
-corner_led_locations = GridLocations(cled_dx, cled_dy, 2, 2)
 # boxes for corner LEDs
+corner_led_locations = GridLocations(cled_dx, cled_dy, 2, 2)
 cboxes_sk = Sketch() + [
     loc * Rectangle(corner_dx + wall_th, corner_dy + wall_th) 
     - loc * Rectangle(corner_dx - wall_th, corner_dy - wall_th)
@@ -192,7 +196,6 @@ base_sk = Rectangle(cnt_x * led_dx, cnt_y * led_dy)
 back += extrude(base_sk, mag_dep)
 
 plane = Plane.XY.offset(mag_dep)
-#cs = plane * Circle(10)
 
 stripes_sk = Sketch() + [
     plane * loc * Rectangle(cnt_x * led_dx, led_stripe_w)
@@ -217,9 +220,7 @@ back += extrude(c1_sk, mag_dep)
 back -= extrude(c1g_sk, -led_stripe_h/4)
 
 # melting 2 nut holes
-mn_hole_dx = 40
-nm_hole_dy = (cnt_y-2) * led_dy
-mn_locs = GridLocations(mn_hole_dx, nm_hole_dy, 2, 2)
+mn_locs = GridLocations(mn_hole_dx, nm_hole_dy, 4, 2)
 mn_sk = Sketch() + [
     plane * loc * Circle(mnut_dia/2)
     for loc in mn_locs
@@ -231,10 +232,10 @@ mn_sk = Sketch() + [
 ] 
 back -= extrude(mn_sk, -mnut_height*2)
 
-# cable hole
+# cable holes
 cab_sk = Sketch() + [
-    loc * Rectangle(4,5)
-    for loc in GridLocations(24, mag_dy - 15, 2, 2)
+    loc * Rectangle(6,4)
+    for loc in GridLocations(24, mag_dy - 24, 1, 2)
 ]
 back -= extrude(cab_sk, -10)
 
@@ -244,8 +245,11 @@ back -= extrude(cab_sk, -10)
  
 back_height = 28.0
 
-cbase = Box(mn_hole_dx + 20, nm_hole_dy + 20, back_height,
-            align=[Align.CENTER, Align.CENTER, Align.MIN])
+case = Box(mn_hole_dx + 20, nm_hole_dy/2 + 20, back_height,
+            align=[Align.CENTER, Align.MIN, Align.MIN])
+
+topf = case.faces().sort_by().last
+case = offset(case, amount=-2, openings=topf)
 
 print(f"size_x = {size_x}") 
 print(f"size_y = {size_y}")
@@ -253,10 +257,12 @@ print(f"box_x = {box_x}")
 print(f"box_y = {box_y}")
 print(f"mn_hole_dx = {mn_hole_dx}")
 print(f"nm_hole_dy = {nm_hole_dy}")
+print(f"mn_nut_height = {(nm_hole_dy-size_y)/2}")
+
 
 show(front.move(Location(Vector(size_x + 20, size_y + 20))),
      back.move(Location(Vector(size_x + 20, 0))),
-     cbase
+     case
      )
 
 filename = "wortuhr-front"
