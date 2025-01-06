@@ -3,6 +3,7 @@ set_port(3939)
 from build123d import *
 from math import *
 
+mt = 0.001
 tol = 0.2
 front_th = 1.2 # thickness without diffusor
 diffusor_th = 0.4 # diffusor thickness (first two layers of print in white)
@@ -250,12 +251,42 @@ case_height = 28.0
 case_x = mn_hole_dx + 20
 case_y = nm_hole_dy/2 + 25
 case_wall_th = 1.6
+case_radius = case_wall_th + screw_box_size/2
 
-case = Box(case_x, case_y, case_height,
-            align=[Align.CENTER, Align.MIN, Align.MIN])
+box_sk = Rectangle(case_x, case_y, align=(Align.CENTER, Align.MIN))
+#box_sk = fillet(box_sk.vertices(), radius=case_radius)
+case = extrude(box_sk, case_height)
+
 
 topf = case.faces().sort_by().last
 case = offset(case, amount=-case_wall_th, openings=topf)
+
+# screw holees for fastening the cover
+cover_screw_dx = case_x - 2 * case_wall_th - screw_box_size
+cover_screw_dy = case_y - 2 * case_wall_th - screw_box_size
+
+cover_screw_pos = GridLocations(cover_screw_dx, cover_screw_dy, 2, 2)
+
+cover_screw_sk = Sketch() + [
+    loc * Rectangle(screw_box_size, screw_box_size)
+    for loc in cover_screw_pos
+]
+
+case += extrude(Plane.XY.move(Pos(0, case_y/2)) * cover_screw_sk, case_height - 3)
+
+
+zedges = case.edges().filter_by(Axis.Z)
+
+show(case, zedges)
+
+case = fillet(zedges, radius=screw_box_size/2-mt)
+
+cover_hole_sk = Sketch() + [
+    loc * Circle(mnut_screw_dia/2)
+    for loc in cover_screw_pos
+]
+case -= extrude(Plane.XY.offset(case_height - 3).move(Pos(0, case_y/2)) * cover_hole_sk, -mnut_height)
+
 
 # mount holes for case
 mn_sk = Sketch() + [
@@ -263,7 +294,6 @@ mn_sk = Sketch() + [
     for loc in mn_locs
 ] 
 case -= extrude(mn_sk, -10)
-
 
 # hole for cable to LEDs
 cab_sk = Sketch() + [
@@ -279,24 +309,6 @@ power_sk = Plane.XZ * Pos(0, case_height/2) * (SlotCenterToCenter(center_separat
 ])
 case -= extrude(power_sk, -case_wall_th) 
 
-# screw holees for fastening the cover
-cover_screw_dx = case_x - 2 * case_wall_th - screw_box_size
-cover_screw_dy = case_y - 2 * case_wall_th - screw_box_size
-
-cover_screw_pos = GridLocations(cover_screw_dx, cover_screw_dy, 2, 2)
-
-cover_screw_sk = Sketch() + [
-    loc * Rectangle(screw_box_size, screw_box_size)
-    for loc in cover_screw_pos
-]
-
-case += extrude(Plane.XY.move(Pos(0, case_y/2)) * cover_screw_sk, case_height - 3)
-
-cover_hole_sk = Sketch() + [
-    loc * Circle(mnut_screw_dia/2)
-    for loc in cover_screw_pos
-]
-case -= extrude(Plane.XY.offset(case_height - 3).move(Pos(0, case_y/2)) * cover_hole_sk, -mnut_height)
 
 
 
