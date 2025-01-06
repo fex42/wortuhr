@@ -144,8 +144,10 @@ front += extrude(outer_wall_sk, grid_height + mag_dep + back_th + 2)
 mag_locations = Locations(
     (-mag_dx/2 , 0),
     (+mag_dx/2 , 0),
-    (0, -mag_dy/2),
-    (0, +mag_dy/2)
+    (-70.0, -mag_dy/2),
+    (-70.0, +mag_dy/2),
+    (+70, -mag_dy/2),
+    (+70, +mag_dy/2)
 )
 mag_sk = Sketch() + [
     loc * Rectangle(screw_box_size, screw_box_size)
