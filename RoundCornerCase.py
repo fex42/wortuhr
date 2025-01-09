@@ -9,7 +9,7 @@ class RoundCornerCase:
     def __init__(self,
                  size_x = 100.0,
                  size_y = 80.0,
-                 size_z = 30,
+                 size_z = 30.0,
                  outer_r = 7.0,
                  wall_th = 1.6,
                  cover_nut_h = 3.0,
@@ -72,5 +72,5 @@ class RoundCornerCase:
 
         return box
 
-
-show(RoundCornerCase().base())
+if __name__ == '__main__':
+    show(RoundCornerCase().base())

@@ -2,6 +2,7 @@ from ocp_vscode import show, show_object, reset_show, set_port, set_defaults, ge
 set_port(3939)
 from build123d import *
 from math import *
+from RoundCornerCase import RoundCornerCase
 
 mt = 0.001
 tol = 0.2
@@ -246,48 +247,61 @@ back -= extrude(cab_sk, -10)
 ###########################################################
 ## Controller case base
 ###########################################################
- 
+
+
 case_height = 28.0
 
 # case outer size
 case_x = mn_hole_dx + 20
-case_y = nm_hole_dy/2 + 25
+case_y = nm_hole_dy/2 + 24.645
 case_wall_th = 1.6
 case_radius = case_wall_th + screw_box_size/2
 
-box_sk = Rectangle(case_x, case_y, align=(Align.CENTER, Align.MIN))
-#box_sk = fillet(box_sk.vertices(), radius=case_radius)
-case = extrude(box_sk, case_height)
+
+case = RoundCornerCase(case_x, 
+                       case_y, 
+                       case_height,
+                       case_radius,
+                       case_wall_th,
+                       screw_hole_dia=mnut_dia,
+                       screw_hole_dep=mnut_height
+                       ).base().move(Pos(0, case_y/2))
 
 
-topf = case.faces().sort_by().last
-case = offset(case, amount=-case_wall_th, openings=topf)
+
+#box_sk = Rectangle(case_x, case_y, align=(Align.CENTER, Align.MIN))
+##box_sk = fillet(box_sk.vertices(), radius=case_radius)
+#case = extrude(box_sk, case_height)
+
+
+#topf = case.faces().sort_by().last
+#case = offset(case, amount=-case_wall_th, openings=topf)
 
 # screw holees for fastening the cover
-cover_screw_dx = case_x - 2 * case_wall_th - screw_box_size
-cover_screw_dy = case_y - 2 * case_wall_th - screw_box_size
+#cover_screw_dx = case_x - 2 * case_wall_th - screw_box_size
+#cover_screw_dy = case_y - 2 * case_wall_th - screw_box_size#
 
-cover_screw_pos = GridLocations(cover_screw_dx, cover_screw_dy, 2, 2)
+#cover_screw_pos = GridLocations(cover_screw_dx, cover_screw_dy, 2, 2)
 
-cover_screw_sk = Sketch() + [
-    loc * Rectangle(screw_box_size, screw_box_size)
-    for loc in cover_screw_pos
-]
+#cover_screw_sk = Sketch() + [
+#    loc * Rectangle(screw_box_size, screw_box_size)
+#    for loc in cover_screw_pos
+#]
 
-case += extrude(Plane.XY.move(Pos(0, case_y/2)) * cover_screw_sk, case_height - 3)
+#case += extrude(Plane.XY.move(Pos(0, case_y/2)) * cover_screw_sk, case_height - 3)
 
 
-zedges = case.edges().filter_by(Axis.Z)
+#zedges = case.edges().filter_by(Axis.Z)
 
-show(case, zedges)
+#show(case, zedges)
 
-case = fillet(zedges, radius=screw_box_size/2-mt)
+#case = fillet(zedges, radius=screw_box_size/2-mt)
 
-cover_hole_sk = Sketch() + [
-    loc * Circle(mnut_screw_dia/2)
-    for loc in cover_screw_pos
-]
-case -= extrude(Plane.XY.offset(case_height - 3).move(Pos(0, case_y/2)) * cover_hole_sk, -mnut_height)
+#cover_hole_sk = Sketch() + [
+#    loc * Circle(mnut_screw_dia/2)
+#    for loc in cover_screw_pos
+#]
+#case -= extrude(Plane.XY.offset(case_height - 3).move(Pos(0, case_y/2)) * cover_hole_sk, -mnut_height)
 
 
 # mount holes for case
