@@ -348,3 +348,6 @@ export_stl(front, f"{filename}.stl")
 filename = "wortuhr-back"
 export_step(back, f"{filename}.step")
 export_stl(back, f"{filename}.stl")
+filename = "wortuhr-case"
+export_step(case, f"{filename}.step")
+export_stl(case, f"{filename}.stl")
