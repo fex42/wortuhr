@@ -5,6 +5,7 @@ from build123d import *
 
 class RoundCornerCase:
     eps = 0.001
+    tol = 0.2
 
     def __init__(self,
                  size_x = 100.0,
@@ -25,6 +26,55 @@ class RoundCornerCase:
         self.screw_hole_dep = screw_hole_dep
         
 
+    def cover(self):
+        size_x = self.size_x
+        size_y = self.size_y
+        outer_r = self.outer_r
+        wall_th = self.wall_th
+        cover_nut_h = self.cover_nut_h
+        eps = self.eps
+        tol = self.tol
+
+        cover = Box(size_x, size_y, wall_th, align=(Align.CENTER, Align.CENTER, Align.MIN))
+        cover += Box(size_x - 2*(wall_th + tol), 
+                     size_y - 2*(wall_th + tol), 
+                     wall_th + cover_nut_h - tol,
+                     align=(Align.CENTER, Align.CENTER, Align.MIN))
+
+        vedges = cover.edges().filter_by(Axis.Z)
+        iedges = vedges.filter_by_position(Axis.X, 
+                                           minimum=size_x/2-wall_th-tol-eps,
+                                           maximum=size_x/2-wall_th-tol+eps)
+        iedges += vedges.filter_by_position(Axis.X,
+                                            minimum=-size_x/2+wall_th+tol-eps, 
+                                            maximum=-size_x/2+wall_th+tol+eps)
+
+
+        cover = fillet(iedges, radius=(outer_r-wall_th-tol-eps))
+
+        vedges = cover.edges().filter_by(Axis.Z)
+        oedges = vedges.filter_by_position(Axis.X, minimum=size_x/2-eps, maximum=size_x/2+eps)
+        oedges += vedges.filter_by_position(Axis.X, minimum=-size_x/2-eps, maximum=-size_x/2+eps)
+
+        cover = fillet(oedges, radius=outer_r-eps)
+
+        topf = cover.faces().sort_by().last
+        cover = offset(cover, openings=topf, amount=-wall_th+eps+tol)
+
+        hole_loc = self._hole_locations()
+        hole_sk = Sketch() + [
+            Plane.XY * loc * Circle(outer_r-wall_th-tol)
+            for loc in hole_loc
+        ]
+        cover += extrude(hole_sk, wall_th + cover_nut_h - tol)
+
+#        show(cover)
+#        topf = cover.faces().sort_by().last
+#        cover = offset(cover, openings=topf, amount=-wall_th)
+
+
+        return cover
+
     def base(self):
         size_x = self.size_x
         size_y = self.size_y
@@ -42,7 +92,6 @@ class RoundCornerCase:
         topf = box.faces().sort_by().last
 
         box = offset(box, openings=topf, amount=-wall_th)
-
 
         ibox = Box(2 * inner_r, 2*inner_r, corner_h, 
                 align=(Align.CENTER, Align.CENTER, Align.MIN)).move(Pos(size_x/2-outer_r, size_y/2-outer_r, wall_th))
@@ -63,7 +112,7 @@ class RoundCornerCase:
 
         box = fillet(oedges, radius=outer_r-eps)
 
-        hole_loc = GridLocations(size_x-2*wall_th-2*inner_r, size_y-2*wall_th-2*inner_r, 2, 2)
+        hole_loc = self._hole_locations()
         hole_sk = Sketch() + [
             Plane.XY.offset(size_z-cover_nut_h) * loc * Circle(screw_hole_dia/2)
             for loc in hole_loc
@@ -72,5 +121,14 @@ class RoundCornerCase:
 
         return box
 
+    def _hole_locations(self):
+        size_x = self.size_x
+        size_y = self.size_y
+        wall_th = self.wall_th
+        inner_r = self.outer_r - self.wall_th
+        return GridLocations(size_x-2*wall_th-2*inner_r, size_y-2*wall_th-2*inner_r, 2, 2)
+
 if __name__ == '__main__':
-    show(RoundCornerCase().base())
+    case = RoundCornerCase()
+    show(case.base().move(Pos(0,100)),
+         case.cover())
