@@ -257,7 +257,6 @@ case_y = nm_hole_dy/2 + 24.645
 case_wall_th = 1.6
 case_radius = case_wall_th + screw_box_size/2
 
-
 case = RoundCornerCase(case_x, 
                        case_y, 
                        case_height,
@@ -288,7 +287,16 @@ power_sk = Plane.XZ * Pos(0, case_height/2) * (SlotCenterToCenter(center_separat
 ])
 case -= extrude(power_sk, -case_wall_th) 
 
-case.move(Location(Vector(-size_x - 20, 0)))
+#case.move(Location(Vector(-size_x - 20, 0)))
+
+cover = RoundCornerCase(case_x, 
+                       case_y, 
+                       case_height,
+                       case_radius,
+                       case_wall_th,
+                       screw_hole_dia=mnut_dia,
+                       screw_hole_dep=mnut_height
+                       ).cover().move(Pos(0, -case_y/2-10))
 
 
 print(f"size_x = {size_x}") 
@@ -303,6 +311,7 @@ print(f"mn_nut_height = {(nm_hole_dy-size_y)/2}")
 show(front.move(Location(Vector(size_x + 20, size_y + 20))),
      back.move(Location(Vector(size_x + 20, 0))),
      case,
+     cover
      )
 
 filename = "wortuhr-front"
@@ -314,3 +323,6 @@ export_stl(back, f"{filename}.stl")
 filename = "wortuhr-case"
 export_step(case, f"{filename}.step")
 export_stl(case, f"{filename}.stl")
+filename = "wortuhr-cover"
+export_step(cover, f"{filename}.step")
+export_stl(cover, f"{filename}.stl")
