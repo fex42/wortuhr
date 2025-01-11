@@ -68,6 +68,15 @@ class RoundCornerCase:
         ]
         cover += extrude(hole_sk, wall_th + cover_nut_h - tol)
 
+        screw_dia = 4.1
+        holes = Sketch() + [
+            loc * CounterBoreHole(radius= screw_dia/2,
+    counter_bore_radius = 3.1, counter_bore_depth=2,
+    depth = wall_th + cover_nut_h + 2).mirror(Plane.XY)
+            for loc in hole_loc
+        ]
+        cover -= holes
+
 #        show(cover)
 #        topf = cover.faces().sort_by().last
 #        cover = offset(cover, openings=topf, amount=-wall_th)
