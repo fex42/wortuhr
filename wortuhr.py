@@ -16,8 +16,6 @@ grid_height = 10.0 # grid height
 led_dx = 16.6  # x distance between LEDs on stripe
 led_dy = 18.94 # Y distance between stripes
 
-#cnt_x = 8 # 11 # number of letters in a row
-#cnt_y = 6 # 10 # number of letter rows
 cnt_x = 11 # number of letters in a row
 cnt_y = 10 # number of letter rows
 
@@ -61,7 +59,7 @@ class LetterGenerator:
 
 gen = LetterGenerator()
 
-corner_led_dia = 3 # diameter of corner/minute LED hole
+corner_led_dia = 4.5 # diameter of corner/minute LED hole
 
 # magnets joining back and front
 mag_dia = 8.3 # diameter of magnet hole
@@ -71,7 +69,7 @@ led_stripe_w = 10.2
 led_stripe_h = 2.0
 
 # font parameters for letters
-font_size = 14.0
+font_size = 14.5
 font="FreeSans"
 font_style = FontStyle.BOLD
 
