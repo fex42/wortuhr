@@ -57,7 +57,7 @@ class LetterGenerator:
             self._x -= 1
         if self._x <= 0:
             self._x = cnt_x
-        return "-" # c
+        return c
 
 gen = LetterGenerator()
 
