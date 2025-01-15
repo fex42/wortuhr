@@ -31,16 +31,16 @@ class LetterGenerator:
     """A generator for the letters that respect the order of GridLocations"""
 
     letters = [
-        "ESKISTLFÜNF",
+        "ESKISTAFÜNF",
         "ZEHNZWANZIG",
         "DREIVIERTEL",
-        "NACHAPPYVOR",
-        "HALBIRTHDAY",
-        "DRZWÖLFÜNFX",
-        "ZEHNEUNDREI",
-        "ZWEINSIEBEN",
-        "ELFVIERACHT",
-        "SECHSIUHRYE"
+        "VORFUNKNACH",
+        "HALBAELFÜNF",
+        "EINSXAMZWEI",
+        "DREIAUJVIER",
+        "SECHSNLACHT",
+        "SIEBENZWÖLF",
+        "ZEHNEUNKUHR"
         ]
 
     _x = cnt_x
