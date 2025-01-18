@@ -88,7 +88,7 @@ font_style = FontStyle.BOLD
 
 mnut_dia = 4.6
 mnut_height = 4.2
-mnut_screw_dia = 4.1
+mnut_screw_dia = 4.0
 
 mn_hole_dx = 50
 nm_hole_dy = (cnt_y-2) * led_dy
@@ -169,7 +169,7 @@ front += extrude(mag_sk, grid_height)
 
 top_grid_pl = Plane.XY.offset(grid_height)
 mag_sk = Sketch() + [
-    top_grid_pl * loc * Circle(mnut_screw_dia/2)
+    top_grid_pl * loc * Circle(mnut_dia/2)
     for loc in mag_locations
 ]
 front -= extrude(mag_sk, -mnut_height)
