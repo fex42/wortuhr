@@ -28,7 +28,20 @@ cled_offset_x = 5 # X offset of corner led to middle (LED, not hole)
 cled_offset_y = 3 # Y offset of corner led to middle (LED, not hole)
 
 class LetterGenerator:
-    """A generator for the letters that respect the order of GridLocations"""
+    """A generator for the letters that respect the order of GridLocat"ions"""
+
+    letters = [
+        "ESKISTLFÜNF",
+        "ZEHNZWANZIG",
+        "DREIVIERTEL",
+        "NACHAPPYVOR",
+        "HALBIRTHDAY",
+        "DRZWÖLFÜNFX",
+        "ZEHNEUNDREI",
+        "ZWEINSIEBEN",
+        "ELFVIERACHT",
+        "SECHSIUHRYE"
+    ]
 
     letters_de = [
         "ESKISTAFÜNF",
@@ -43,7 +56,7 @@ class LetterGenerator:
         "ZEHNEUNKUHR"
         ]
 
-    letters = [
+    letters_en = [
         "ITLISASAMPM",
         "ACQUARTERDC",
         "TWENTYFIVEX",
@@ -176,8 +189,8 @@ front -= extrude(mag_sk, -mnut_height)
 
 # headroom for soldering stripes
 solder_sk = Sketch() + [
-    top_grid_pl * loc * Rectangle(wall_th, led_stripe_w)
-    for loc in GridLocations(cnt_x * led_dx, led_dy, 2, cnt_y)
+    top_grid_pl * loc * Rectangle(wall_th + cnt_x * led_dx, led_stripe_w)
+    for loc in GridLocations(cnt_x * led_dx, led_dy, 1, cnt_y)
 ]
 front -= extrude(solder_sk, -2)
 
