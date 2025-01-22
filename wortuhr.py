@@ -247,8 +247,17 @@ c1g_sk += c1g_sk.mirror(Plane.YZ)
 back += extrude(c1_sk, mag_dep)
 back -= extrude(c1g_sk, -led_stripe_h/4)
 
-# melting 2 nut holes
-mn_locs = GridLocations(mn_hole_dx, nm_hole_dy, 4, 2)
+# melting nut holes
+#mn_locs = GridLocations(mn_hole_dx, nm_hole_dy, 4, 2)
+
+x_top = mn_hole_dx/2
+x_btn = mn_hole_dx*1.6
+mn_locs = Locations(
+    (-x_top, nm_hole_dy/2),
+    (+x_top, nm_hole_dy/2),
+    (-x_btn, -nm_hole_dy/2),
+    (x_btn, -nm_hole_dy/2),
+)
 mn_sk = Sketch() + [
     plane * loc * Circle(mnut_dia/2)
     for loc in mn_locs
