@@ -81,7 +81,7 @@ class LetterGenerator:
             self._x -= 1
         if self._x <= 0:
             self._x = cnt_x
-        return c
+        return '-' # c
 
 gen = LetterGenerator()
 
@@ -123,159 +123,171 @@ mag_dy = box_y - 2 * wall_th - screw_box_size
 # Front
 ##########################################################
 
-# Sunken letters and holes
-front = Box(size_x, size_y, front_th + diffusor_th,
-             align=(Align.CENTER, Align.CENTER, Align.MAX))
-txt_pl = Plane(front.faces().sort_by(Axis.Z).last)
+def magnetLocations():
+    return Locations(
+        (-mag_dx/2 , 0),
+        (+mag_dx/2 , 0),
+        (-70.0, -mag_dy/2),
+        (-70.0, +mag_dy/2),
+        (+70, -mag_dy/2),
+        (+70, +mag_dy/2)
+    )
 
-# Letters
-letter_sk = Sketch() + [
-    txt_pl * loc * Text(gen.next_char(), font_size, font=font, font_style=font_style, rotation=180)
-    for loc in GridLocations(led_dx, led_dy, cnt_x, cnt_y)
-]
-front -= extrude(letter_sk, -front_th)
 
-# Holes for corner LEDs
-holes_sk = Sketch() + [
-    txt_pl * loc * Circle(corner_led_dia/2)
-    for loc in GridLocations(cled_dx, cled_dy, 2, 2)
-]
-front -= extrude(letter_sk + holes_sk, -front_th)
+def frontPanel():
+    front = Box(size_x, size_y, front_th + diffusor_th,
+                align=(Align.CENTER, Align.CENTER, Align.MAX))
+    txt_pl = Plane(front.faces().sort_by(Axis.Z).last)
 
-front = front.mirror(Plane.ZX)
+    # Sunken letters and holes
 
-# boxes for letters
-lboxes_sk = Rectangle(wall_th + cnt_x * led_dx, wall_th + cnt_y * led_dy,
-                         align=(Align.CENTER, Align.CENTER, Align.MIN)) - [
-    loc * Rectangle(led_dx - wall_th, led_dy - wall_th)
-    for loc in GridLocations(led_dx, led_dy, cnt_x, cnt_y)
-]
-front += extrude(lboxes_sk, grid_height-1)
+    # Letters
+    letter_sk = Sketch() + [
+        txt_pl * loc * Text(gen.next_char(), font_size, font=font, font_style=font_style, rotation=180)
+        for loc in GridLocations(led_dx, led_dy, cnt_x, cnt_y)
+    ]
+    front -= extrude(letter_sk, -front_th)
 
-# boxes for corner LEDs
-corner_led_locations = GridLocations(cled_dx, cled_dy, 2, 2)
-cboxes_sk = Sketch() + [
-    loc * Rectangle(corner_dx + wall_th, corner_dy + wall_th) 
-    - loc * Rectangle(corner_dx - wall_th, corner_dy - wall_th)
-    for loc in corner_led_locations
-]
-front += extrude(cboxes_sk, grid_height - 2)
+    # Holes for corner LEDs
+    holes_sk = Sketch() + [
+        txt_pl * loc * Circle(corner_led_dia/2)
+        for loc in GridLocations(cled_dx, cled_dy, 2, 2)
+    ]
+    front -= extrude(letter_sk + holes_sk, -front_th)
 
-# outer box wall
-outer_wall_sk = Rectangle(box_x, box_y) - Rectangle(box_x - 2 * wall_th, box_y - 2 * wall_th)
-front += extrude(outer_wall_sk, grid_height + mag_dep + back_th + 2)
+    front = front.mirror(Plane.ZX)
 
-# magnet connectors
-mag_locations = Locations(
-    (-mag_dx/2 , 0),
-    (+mag_dx/2 , 0),
-    (-70.0, -mag_dy/2),
-    (-70.0, +mag_dy/2),
-    (+70, -mag_dy/2),
-    (+70, +mag_dy/2)
-)
-mag_sk = Sketch() + [
-    loc * Rectangle(screw_box_size, screw_box_size)
-    for loc in mag_locations
-]
-front += extrude(mag_sk, grid_height)
+    # boxes for letters
+    lboxes_sk = Rectangle(wall_th + cnt_x * led_dx, wall_th + cnt_y * led_dy,
+                            align=(Align.CENTER, Align.CENTER, Align.MIN)) - [
+        loc * Rectangle(led_dx - wall_th, led_dy - wall_th)
+        for loc in GridLocations(led_dx, led_dy, cnt_x, cnt_y)
+    ]
+    front += extrude(lboxes_sk, grid_height-1)
 
-top_grid_pl = Plane.XY.offset(grid_height)
-mag_sk = Sketch() + [
-    top_grid_pl * loc * Circle(mnut_dia/2)
-    for loc in mag_locations
-]
-front -= extrude(mag_sk, -mnut_height)
+    # boxes for corner LEDs
+    corner_led_locations = GridLocations(cled_dx, cled_dy, 2, 2)
+    cboxes_sk = Sketch() + [
+        loc * Rectangle(corner_dx + wall_th, corner_dy + wall_th) 
+        - loc * Rectangle(corner_dx - wall_th, corner_dy - wall_th)
+        for loc in corner_led_locations
+    ]
+    front += extrude(cboxes_sk, grid_height - 2)
 
-# headroom for soldering stripes
-solder_sk = Sketch() + [
-    top_grid_pl * loc * Rectangle(wall_th + cnt_x * led_dx, led_stripe_w)
-    for loc in GridLocations(cnt_x * led_dx, led_dy, 1, cnt_y)
-]
-front -= extrude(solder_sk, -2)
+
+    # outer box wall
+    outer_wall_sk = Rectangle(box_x, box_y) - Rectangle(box_x - 2 * wall_th, box_y - 2 * wall_th)
+    front += extrude(outer_wall_sk, grid_height + mag_dep + back_th + 2)
+
+
+    mag_sk = Sketch() + [
+        loc * Rectangle(screw_box_size, screw_box_size)
+        for loc in magnetLocations()
+    ]
+    front += extrude(mag_sk, grid_height)
+
+    top_grid_pl = Plane.XY.offset(grid_height)
+    mag_sk = Sketch() + [
+        top_grid_pl * loc * Circle(mnut_dia/2)
+        for loc in magnetLocations()
+    ]
+    front -= extrude(mag_sk, -mnut_height)
+
+    # headroom for soldering stripes
+    solder_sk = Sketch() + [
+        top_grid_pl * loc * Rectangle(wall_th + cnt_x * led_dx, led_stripe_w)
+        for loc in GridLocations(cnt_x * led_dx, led_dy, 1, cnt_y)
+    ]
+    front -= extrude(solder_sk, -2)
+
+    return front
+
+
 
 ###########################################################
 ## Back
 ###########################################################
+def meltNutLocations():
+    x_top = mn_hole_dx/2
+    x_btn = mn_hole_dx*1.6
 
-back_x = box_x - 2 * wall_th - tol
-back_y = box_y - 2 * wall_th - tol
+    return Locations(
+        (-x_top, nm_hole_dy/2),
+        (+x_top, nm_hole_dy/2),
+        (-x_btn, -nm_hole_dy/2),
+        (x_btn, -nm_hole_dy/2),
+    )
 
-# back plane
-back = Box(back_x, back_y, back_th, 
-           align=(Align.CENTER, Align.CENTER, Align.MAX))
+def backside():
+    back_x = box_x - 2 * wall_th - tol
+    back_y = box_y - 2 * wall_th - tol
 
-# magnet connectors
-mag_sk = Sketch() + [
-    loc * Rectangle(screw_box_size - tol, screw_box_size - tol)
-    for loc in mag_locations
-]
-back += extrude(mag_sk, mag_dep + 1)
+    # back plane
+    back = Box(back_x, back_y, back_th, 
+            align=(Align.CENTER, Align.CENTER, Align.MAX))
 
-plane = Plane.XY.offset(-back_th)
-back -= plane * mag_locations * CounterBoreHole(radius= mnut_screw_dia/2,
-    counter_bore_radius = 3.1, counter_bore_depth=2,
-    depth = back_th + mag_dep + 2).mirror(Plane.XY)
+    # magnet connectors
+    mag_sk = Sketch() + [
+        loc * Rectangle(screw_box_size - tol, screw_box_size - tol)
+        for loc in magnetLocations()
+    ]
+    back += extrude(mag_sk, mag_dep + 1)
 
+    back -= Plane.XY.offset(-back_th) * magnetLocations() * CounterBoreHole(radius= mnut_screw_dia/2,
+        counter_bore_radius = 3.1, counter_bore_depth=2,
+        depth = back_th + mag_dep + 2).mirror(Plane.XY)
 
+    # letter LED stripes
+    base_sk = Rectangle(cnt_x * led_dx, cnt_y * led_dy)
+    back += extrude(base_sk, mag_dep)
 
-# letter LED stripes
-base_sk = Rectangle(cnt_x * led_dx, cnt_y * led_dy)
-back += extrude(base_sk, mag_dep)
+    plane = Plane.XY.offset(mag_dep)
 
-plane = Plane.XY.offset(mag_dep)
+    stripes_sk = Sketch() + [
+        plane * loc * Rectangle(cnt_x * led_dx, led_stripe_w)
+        for loc in GridLocations(led_dx, led_dy, 1, cnt_y)
+    ]
+    back -= extrude(stripes_sk, -led_stripe_h/4)
 
-stripes_sk = Sketch() + [
-    plane * loc * Rectangle(cnt_x * led_dx, led_stripe_w)
-    for loc in GridLocations(led_dx, led_dy, 1, cnt_y)
-]
-back -= extrude(stripes_sk, -led_stripe_h/4)
+    # corner LEDs
+    c1_loc = Location(Vector((cled_dx-cled_offset_x)/2, (cled_dy-cled_offset_y)/2))
 
-# corner LEDs
-c1_loc = Location(Vector((cled_dx-cled_offset_x)/2, (cled_dy-cled_offset_y)/2))
+    ang = 45
 
-ang = 45
+    c1_sk = c1_loc * Rectangle(led_dx,led_stripe_w + 2).rotate(Axis.Z, -ang)
+    c1_sk += c1_sk.mirror(Plane.XZ)
+    c1_sk += c1_sk.mirror(Plane.YZ)
 
-c1_sk = c1_loc * Rectangle(led_dx,led_stripe_w + 2).rotate(Axis.Z, -ang)
-c1_sk += c1_sk.mirror(Plane.XZ)
-c1_sk += c1_sk.mirror(Plane.YZ)
+    c1g_sk = Plane.XY.offset(mag_dep) * c1_loc * Rectangle(led_dx,led_stripe_w).rotate(Axis.Z, -ang)
+    c1g_sk += c1g_sk.mirror(Plane.XZ)
+    c1g_sk += c1g_sk.mirror(Plane.YZ)
 
-c1g_sk = Plane.XY.offset(mag_dep) * c1_loc * Rectangle(led_dx,led_stripe_w).rotate(Axis.Z, -ang)
-c1g_sk += c1g_sk.mirror(Plane.XZ)
-c1g_sk += c1g_sk.mirror(Plane.YZ)
+    back += extrude(c1_sk, mag_dep)
+    back -= extrude(c1g_sk, -led_stripe_h/4)
 
-back += extrude(c1_sk, mag_dep)
-back -= extrude(c1g_sk, -led_stripe_h/4)
+    # melting nut holes
+    #mn_locs = GridLocations(mn_hole_dx, nm_hole_dy, 4, 2)
+    mn_locs = meltNutLocations()
 
-# melting nut holes
-#mn_locs = GridLocations(mn_hole_dx, nm_hole_dy, 4, 2)
+    mn_sk = Sketch() + [
+        plane * loc * Circle(mnut_dia/2)
+        for loc in mn_locs
+    ] 
+    back -= extrude(mn_sk, -mnut_height)
+    mn_sk = Sketch() + [
+        plane * loc * Circle(mnut_screw_dia/2)
+        for loc in mn_locs
+    ] 
+    back -= extrude(mn_sk, -mnut_height*2)
 
-x_top = mn_hole_dx/2
-x_btn = mn_hole_dx*1.6
-mn_locs = Locations(
-    (-x_top, nm_hole_dy/2),
-    (+x_top, nm_hole_dy/2),
-    (-x_btn, -nm_hole_dy/2),
-    (x_btn, -nm_hole_dy/2),
-)
-mn_sk = Sketch() + [
-    plane * loc * Circle(mnut_dia/2)
-    for loc in mn_locs
-] 
-back -= extrude(mn_sk, -mnut_height)
-mn_sk = Sketch() + [
-    plane * loc * Circle(mnut_screw_dia/2)
-    for loc in mn_locs
-] 
-back -= extrude(mn_sk, -mnut_height*2)
-
-# cable holes
-ch_loc = GridLocations(24, mag_dy - 24, 1, 2)
-cab_sk = Sketch() + [
-    loc * Rectangle(6,4)
-    for loc in ch_loc
-]
-back -= extrude(cab_sk, -10)
+    # cable holes
+    ch_loc = GridLocations(24, mag_dy - 24, 1, 2)
+    cab_sk = Sketch() + [
+        loc * Rectangle(6,4)
+        for loc in ch_loc
+    ]
+    back -= extrude(cab_sk, -10)
+    return back
 
 ###########################################################
 ## Controller case base
@@ -290,46 +302,49 @@ case_y = nm_hole_dy/2 + 24.645
 case_wall_th = 1.6
 case_radius = case_wall_th + screw_box_size/2
 
-case = RoundCornerCase(case_x, 
-                       case_y, 
-                       case_height,
-                       case_radius,
-                       case_wall_th,
-                       screw_hole_dia=mnut_dia,
-                       screw_hole_dep=mnut_height
-                       ).base().move(Pos(0, case_y/2))
+def caseBox():
+    case = RoundCornerCase(case_x, 
+                        case_y, 
+                        case_height,
+                        case_radius,
+                        case_wall_th,
+                        screw_hole_dia=mnut_dia,
+                        screw_hole_dep=mnut_height
+                        ).base().move(Pos(0, case_y/2))
 
-# mount holes for case
-mn_sk = Sketch() + [
-    plane * loc * Circle(mnut_screw_dia/2)
-    for loc in mn_locs
-] 
-case -= extrude(mn_sk, -10)
+    plane = Plane.XY.offset(mag_dep)
 
-# hole for cable to LEDs
-cab_sk = Sketch() + [
-    plane * loc * Rectangle(6,4)
-    for loc in GridLocations(24, mag_dy - 24, 1, 2)
-]
-case -= extrude(cab_sk, -10)
+    # mount holes for case
+    mn_sk = Sketch() + [
+        plane * loc * Circle(mnut_screw_dia/2)
+        for loc in meltNutLocations()
+    ] 
+    case -= extrude(mn_sk, -10)
 
-# USB-C Slot for power
-power_sk = Plane.XZ * Pos(0, case_height/2) * (SlotCenterToCenter(center_separation=8.0, height=4.0) + [
-    loc * Circle(1.45)
-    for loc in GridLocations(16.0, 0, 2, 1)
-])
-case -= extrude(power_sk, -case_wall_th) 
+    # hole for cable to LEDs
+    cab_sk = Sketch() + [
+        plane * loc * Rectangle(6,4)
+        for loc in GridLocations(24, mag_dy - 24, 1, 2)
+    ]
+    case -= extrude(cab_sk, -10)
 
-#case.move(Location(Vector(-size_x - 20, 0)))
+    # USB-C Slot for power
+    power_sk = Plane.XZ * Pos(0, case_height/2) * (SlotCenterToCenter(center_separation=8.0, height=4.0) + [
+        loc * Circle(1.45)
+        for loc in GridLocations(16.0, 0, 2, 1)
+    ])
+    case -= extrude(power_sk, -case_wall_th) 
+    return case
 
-cover = RoundCornerCase(case_x, 
-                       case_y, 
-                       case_height,
-                       case_radius,
-                       case_wall_th,
-                       screw_hole_dia=mnut_dia,
-                       screw_hole_dep=mnut_height
-                       ).cover().move(Pos(0, -case_y/2-10))
+def caseCover():
+    return RoundCornerCase(case_x, 
+                        case_y, 
+                        case_height,
+                        case_radius,
+                        case_wall_th,
+                        screw_hole_dia=mnut_dia,
+                        screw_hole_dep=mnut_height
+                        ).cover()
 
 
 print(f"size_x = {size_x}") 
@@ -340,11 +355,37 @@ print(f"mn_hole_dx = {mn_hole_dx}")
 print(f"nm_hole_dy = {nm_hole_dy}")
 print(f"mn_nut_height = {(nm_hole_dy-size_y)/2}")
 
+showFront = True
+showBack = True
+showCase = True
+showCover = True
 
-show(front.move(Location(Vector(size_x + 20, size_y + 20))),
-     back.move(Location(Vector(size_x + 20, 0))),
+
+if showFront:
+    front = frontPanel()
+else:
+    front = Box(1,1,1)
+
+if showBack:
+    back = backside()
+else:
+    back = Box(1,1,1)
+
+if showCase:
+    case = caseBox()
+else:
+    case = Box(1,1,1)
+
+if showCover:
+    cover = caseCover()
+else:
+    cover = Box(1,1,1)
+
+show(
+     front.move(Pos(size_x + 20, size_y + 20)),
+     back.move(Pos(size_x + 20, 0)),
      case,
-     cover
+     cover.move(Pos(0, -case_y/2-10))
      )
 
 filename = "wortuhr-front"
