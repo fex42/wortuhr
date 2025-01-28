@@ -329,10 +329,7 @@ def caseBox():
     case -= extrude(cab_sk, -10)
 
     # USB-C Slot for power
-    power_sk = Plane.XZ * Pos(0, case_height/2) * (SlotCenterToCenter(center_separation=8.0, height=4.0) + [
-        loc * Circle(1.45)
-        for loc in GridLocations(16.0, 0, 2, 1)
-    ])
+    power_sk = Plane.XZ * Pos(0, case_height/2) * (RectangleRounded(width=15.0, height=7.0, radius=1))
     case -= extrude(power_sk, -case_wall_th) 
     return case
 
@@ -355,31 +352,32 @@ print(f"mn_hole_dx = {mn_hole_dx}")
 print(f"nm_hole_dy = {nm_hole_dy}")
 print(f"mn_nut_height = {(nm_hole_dy-size_y)/2}")
 
-showFront = True
-showBack = True
+showFront = False
+showBack = False
 showCase = True
-showCover = True
+showCover = False
 
+
+nix = Box(tol,tol,tol)
 
 if showFront:
     front = frontPanel()
 else:
-    front = Box(1,1,1)
+    front = nix
 
 if showBack:
     back = backside()
 else:
-    back = Box(1,1,1)
+    back = nix
 
 if showCase:
     case = caseBox()
 else:
-    case = Box(1,1,1)
-
+    case = nix
 if showCover:
     cover = caseCover()
 else:
-    cover = Box(1,1,1)
+    cover = nix
 
 show(
      front.move(Pos(size_x + 20, size_y + 20)),
