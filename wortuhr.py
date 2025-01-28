@@ -329,7 +329,7 @@ def caseBox():
     case -= extrude(cab_sk, -10)
 
     # USB-C Slot for power
-    power_sk = Plane.XZ * Pos(0, case_height/2) * (RectangleRounded(width=15.0, height=7.0, radius=1))
+    power_sk = Plane.XZ * Pos(0, case_height/2) * (RectangleRounded(width=14.5, height=6.0, radius=1))
     case -= extrude(power_sk, -case_wall_th) 
     return case
 
@@ -392,7 +392,7 @@ export_stl(front, f"{filename}.stl")
 filename = "wortuhr-back"
 export_step(back, f"{filename}.step")
 export_stl(back, f"{filename}.stl")
-filename = "wortuhr-case"
+filename = "wortuhr-case-usbc2"
 export_step(case, f"{filename}.step")
 export_stl(case, f"{filename}.stl")
 filename = "wortuhr-cover"
