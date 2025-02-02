@@ -3,11 +3,12 @@ set_port(3939)
 from build123d import *
 from math import *
 from RoundCornerCase import RoundCornerCase
+from Foot import Foot
 
 mt = 0.001
 tol = 0.2
 front_th = 1.2 # thickness without diffusor
-diffusor_th = 0.4 # diffusor thickness (first two layers of print in white)
+diffusor_th = 0.45 # diffusor thickness (first two layers of print in white)
 back_th = front_th + diffusor_th # thickness of back
 wall_th = 1.0 # wall thickness
 
@@ -74,7 +75,7 @@ class LetterGenerator:
 
     def next_char(self):
         c = self.letters[self._y-1][self._x-1]
-        print(f"next_char(x = {self._x}, y={self._y}) -> {c}")
+#        print(f"next_char(x = {self._x}, y={self._y}) -> {c}")
         self._y += 1
         if self._y > cnt_y:
             self._y = 1
@@ -329,7 +330,7 @@ def caseBox():
     case -= extrude(cab_sk, -10)
 
     # USB-C Slot for power
-    power_sk = Plane.XZ * Pos(0, case_height/2) * (RectangleRounded(width=14.5, height=6.0, radius=1))
+    power_sk = Plane.XZ * Pos(0, case_height/2) * (RectangleRounded(width=14.2, height=5.6, radius=1.4))
     case -= extrude(power_sk, -case_wall_th) 
     return case
 
@@ -352,11 +353,11 @@ print(f"mn_hole_dx = {mn_hole_dx}")
 print(f"nm_hole_dy = {nm_hole_dy}")
 print(f"mn_nut_height = {(nm_hole_dy-size_y)/2}")
 
-showFront = False
-showBack = False
+showFront = True
+showBack = True
 showCase = True
-showCover = False
-
+showCover = True
+showFoot = True
 
 nix = Box(tol,tol,tol)
 
@@ -379,11 +380,17 @@ if showCover:
 else:
     cover = nix
 
+if showFoot:
+    foot = Foot().foot()
+else:
+    foot = nix
+
 show(
      front.move(Pos(size_x + 20, size_y + 20)),
      back.move(Pos(size_x + 20, 0)),
      case,
-     cover.move(Pos(0, -case_y/2-10))
+     cover.move(Pos(0, -case_y/2-10)),
+     foot.move(Pos(0, case_y*2-20))
      )
 
 filename = "wortuhr-front"
@@ -398,3 +405,6 @@ export_stl(case, f"{filename}.stl")
 filename = "wortuhr-cover"
 export_step(cover, f"{filename}.step")
 export_stl(cover, f"{filename}.stl")
+filename = "wortuhr-foot"
+export_step(foot, f"{filename}.step")
+export_stl(foot, f"{filename}.stl")
