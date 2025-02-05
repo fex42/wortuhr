@@ -330,7 +330,7 @@ def caseBox():
     case -= extrude(cab_sk, -10)
 
     # USB-C Slot for power
-    power_sk = Plane.XZ * Pos(0, case_height/2) * (RectangleRounded(width=14.2, height=5.6, radius=1.4))
+    power_sk = Plane.XZ * Pos(0, case_height/2) * (RectangleRounded(width=14, height=5.4, radius=1.4))
     case -= extrude(power_sk, -case_wall_th) 
     return case
 
