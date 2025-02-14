@@ -45,22 +45,6 @@ class LetterGenerator:
     ]
 
     letters_de = [
-        "ESKISTAFÜNF",
-        "ZEHNZWANZIG",
-        "DREIVIERTEL",
-        "VORFUNKNACH",
-        "HALBAELFÜNF",
-        "EINSXAMZWEI",
-        "DREIAUJVIER",
-        "SECHSNLACHT",
-        "SIEBENZWÖLF",
-        "ZEHNEUNKUHR"
-        ]
-
-    letters_en = [
-        "ITLISASAMPM",
-        "ACQUARTERDC",
-        "TWENTYFIVEX",
         "HALFSTENFTO",
         "PASTERUNINE",
         "ONESIXTHREE",
@@ -353,11 +337,23 @@ print(f"mn_hole_dx = {mn_hole_dx}")
 print(f"nm_hole_dy = {nm_hole_dy}")
 print(f"mn_nut_height = {(nm_hole_dy-size_y)/2}")
 
+def diffusor(dx, dy):
+    _box = Box(
+        dx - 2*wall_th - tol, 
+        dy - 2*wall_th - tol, 
+        grid_height - 4
+        )
+    _ce = _box.edges().filter_by(Axis.Z)
+    _box = fillet(_ce, radius=1.0)
+    _tf = _box.faces().sort_by(Axis.Z).last
+    return offset(_box, openings = _tf, amount=0.4)
+
 showFront = True
 showBack = True
 showCase = True
 showCover = True
 showFoot = True
+showDiffusor = True
 
 nix = Box(tol,tol,tol)
 
@@ -385,26 +381,31 @@ if showFoot:
 else:
     foot = nix
 
+if showDiffusor:
+    diffusor1 = diffusor(led_dx, led_dy)
+    diffusor2 = diffusor(corner_dx, corner_dy)
+else:
+    diffusor1 = nix
+    diffusor2 = nix
+
 show(
      front.move(Pos(size_x + 20, size_y + 20)),
      back.move(Pos(size_x + 20, 0)),
      case,
      cover.move(Pos(0, -case_y/2-10)),
-     foot.move(Pos(0, case_y*2-20))
+     foot.move(Pos(0, case_y*2-20)),
+     diffusor1.move(Pos(80, 0)),
+     diffusor2.move(Pos(80, 30))
      )
 
-filename = "wortuhr-front"
-export_step(front, f"{filename}.step")
-export_stl(front, f"{filename}.stl")
-filename = "wortuhr-back"
-export_step(back, f"{filename}.step")
-export_stl(back, f"{filename}.stl")
-filename = "wortuhr-case-usbc2"
-export_step(case, f"{filename}.step")
-export_stl(case, f"{filename}.stl")
-filename = "wortuhr-cover"
-export_step(cover, f"{filename}.step")
-export_stl(cover, f"{filename}.stl")
-filename = "wortuhr-foot"
-export_step(foot, f"{filename}.step")
-export_stl(foot, f"{filename}.stl")
+def export(filename, object):
+    export_step(object, f"{filename}.step")
+    export_stl(object, f"{filename}.stl")
+
+export("wortuhr-front", front)
+export("wortuhr-back", back)
+export("wortuhr-case-usbc2", case)
+export("wortuhr-cover", cover)
+export("wortuhr-foot_x2", foot)
+export("letter-diffusor_x110", diffusor1)
+export("letter-diffusor_x4", diffusor1)
