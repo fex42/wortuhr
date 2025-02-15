@@ -183,7 +183,7 @@ def frontPanel():
         top_grid_pl * loc * Rectangle(wall_th + cnt_x * led_dx, led_stripe_w)
         for loc in GridLocations(cnt_x * led_dx, led_dy, 1, cnt_y)
     ]
-    front -= extrude(solder_sk, -2)
+    front -= extrude(solder_sk, -1.5)
 
     return front
 
