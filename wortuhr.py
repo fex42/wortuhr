@@ -8,7 +8,7 @@ from Foot import Foot
 mt = 0.001
 tol = 0.2
 front_th = 1.2 # thickness without diffusor
-diffusor_th = 0.45 # diffusor thickness (first two layers of print in white)
+diffusor_th = 0.2 # diffusor thickness (first two layers of print in white)
 back_th = front_th + diffusor_th # thickness of back
 wall_th = 1.0 # wall thickness
 
