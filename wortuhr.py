@@ -341,7 +341,7 @@ def diffusor(dx, dy):
     _box = Box(
         dx - 2*wall_th - tol, 
         dy - 2*wall_th - tol, 
-        grid_height - 4
+        grid_height - 8
         )
     _ce = _box.edges().filter_by(Axis.Z)
     _box = fillet(_ce, radius=1.0)
