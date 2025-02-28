@@ -29,7 +29,7 @@ cled_offset_x = 5 # X offset of corner led to middle (LED, not hole)
 cled_offset_y = 3 # Y offset of corner led to middle (LED, not hole)
 
 class LetterGenerator:
-    """A generator for the letters that respect the order of GridLocat"ions"""
+    """A generator for the letters that respect the order of GridLocations"""
 
     letters_fr = [
         "ILNESTODEUX",
