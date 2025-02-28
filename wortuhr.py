@@ -31,7 +31,20 @@ cled_offset_y = 3 # Y offset of corner led to middle (LED, not hole)
 class LetterGenerator:
     """A generator for the letters that respect the order of GridLocat"ions"""
 
-    letters = [
+    letters_fr = [
+        "ILNESTODEUX",
+        "QUATRETROIS",
+        "NEUFUNESEPT",
+        "HUITSIXCINQ",
+        "MIDIXMINUIT",
+        "ONZERHEURES",
+        "MOINSOLEDIX",
+        "ETRQUARTPMD",
+        "VINGT-CINQU",
+        "ETSDEMIEPAM"
+    ]
+
+    letters_de_alt = [
         "ESKISTLFÜNF",
         "ZEHNZWANZIG",
         "DREIVIERTEL",
@@ -45,6 +58,22 @@ class LetterGenerator:
     ]
 
     letters_de = [
+        "ESKISTRFÜNF",
+        "ZEHNZWANZIG",
+        "DREIVIERTEL",
+        "TGNACHVORUM",
+        "HALBGZWÖLFJ",
+        "ZWEINSIEBEN",
+        "KDREIRHFÜNF",
+        "ELFNEUNVIER",
+        "NACHTZEHNBX",
+        "USECHSFUHRY"
+    ]
+
+    letters_en = [
+        "ITLISASAMPM",
+        "ACQUARTERDC",
+        "TWENTYFIVEX",
         "HALFSTENFTO",
         "PASTERUNINE",
         "ONESIXTHREE",
@@ -53,6 +82,8 @@ class LetterGenerator:
         "SEVENTWELVE",
         "TENSEOCLOCK"
     ]
+
+    letters = letters_fr
 
     _x = cnt_x
     _y = 1
