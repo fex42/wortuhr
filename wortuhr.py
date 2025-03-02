@@ -83,7 +83,7 @@ class LetterGenerator:
         "TENSEOCLOCK"
     ]
 
-    letters = letters_fr
+    letters = letters_de
 
     _x = cnt_x
     _y = 1
