@@ -1,5 +1,9 @@
 # Wortuhr für 3D Drucker
 
+Dies ist meine Variante der Wortuhr, bei der ich Wert auf möglichst einfachen Bau und gute Optik gelegt habe. Außerdem ist es für mich ein kleines Übungsprojekt um etwas "hands on" Erfahrung mit [build123d](https://build123d.readthedocs.io/) zu sammeln. Man sehe mir bitte nach, wenn der Code nicht besonders eleganz ist, ich bin weder mit Python noch mit build123d besonders gut.
+
+Build123d installiert man am besten direkt über das "OCP CAD Viewer" Plugin aus Visual Studio Code. Das ergibt eine sehr nette Entwicklungsumgebung mit 3D-Previewer.
+
 Um die Wortuhr zu bauen, druckt man die entstehenden Teile. Mehrfach zu druckende Teile sind tragen im Dateinamen die Anzahl "_x2", "_x4" oder "_x110", d.h. diese Teile müssen zwei, vier oder 110 mal gedruckt werden.
 
 # Hinweise zum Druck der Frontplatte
