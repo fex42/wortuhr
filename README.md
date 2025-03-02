@@ -1,6 +1,6 @@
 # Wortuhr für 3D Drucker
 
-Dies ist meine Variante der Wortuhr, bei der ich Wert auf möglichst einfachen Bau und gute Optik gelegt habe. Außerdem ist es für mich ein kleines Übungsprojekt um etwas "hands on" Erfahrung mit [build123d](https://build123d.readthedocs.io/) zu sammeln. Man sehe mir bitte nach, wenn der Code nicht besonders eleganz ist, ich bin weder mit Python noch mit build123d besonders gut.
+Dies ist meine Variante der Wortuhr, bei der ich Wert auf möglichst einfachen Bau und gute Optik gelegt habe. Außerdem ist es für mich ein kleines Übungsprojekt um etwas "hands on" Erfahrung mit [build123d](https://build123d.readthedocs.io/) zu sammeln. Man sehe mir nach, wenn der Code nicht besonders eleganz ist (ich bin weder mit Python noch mit build123d besonders gut.)
 
 Build123d installiert man am besten direkt über das "OCP CAD Viewer" Plugin aus Visual Studio Code. Das ergibt eine sehr nette Entwicklungsumgebung mit 3D-Previewer.
 
