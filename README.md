@@ -10,7 +10,7 @@ Um die Wortuhr zu bauen, druckt man die entstehenden Teile. Mehrfach zu druckend
 
 Ich habe die Frontplatte in drei Varianten gedruckt. Man kann die ersten beiden Schichten weiß oder durchsichtig drucken, dazu sollte man den Parameter "diffusor_th" auf 0,4 erhöhen, damit er zwei Schichten umfasst. Am besten gefällt mir aber der Druck, bei der die erste Schicht 0,2mm schwarzem PLA ist. Die Schicht ist dann so dünn, dass die LEDs durchscheinen, aber dunkle Buchstaben sind gar nicht zu sehen.
 
-Druckt man die ersten beiden Schichten mit weißem PLA, wirkt dann braucht man keine Diffusoren drucken, die sind nur nötig, wenn man durchsichtiges oder komplett in Schwarz druckt und werden von den Innenseite einfach eingesteckt, kleben ist bei mir nicht nötig, kommt aber ggf. auf den Drucker bzw. die Filamentkalibrierung an.
+Druckt man die ersten beiden Schichten mit weißem PLA, dann braucht man keine Diffusoren drucken, die sind nur nötig, wenn man durchsichtiges oder komplett in Schwarz druckt und werden von den Innenseite einfach eingesteckt, kleben ist bei mir nicht nötig, kommt aber ggf. auf den Drucker bzw. die Filamentkalibrierung an.
 
 Will man die erste(n) Schichten homogen durchgängig drucken, kann man das im (Orca-)Slicer mit einer Modifier-Box erreichen, bei der man die Anzahl von Top-Layern auf 0 stellt. Macht man das nicht, generiert der Slicer einen Druck, wo die zweite Schicht zwar durchgehend ist, um die Buchstaben aber Wandlinien gedruckt sind, was man als Artefakte erkennen kann.
 
