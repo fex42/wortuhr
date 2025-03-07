@@ -83,7 +83,7 @@ class LetterGenerator:
         "TENSEOCLOCK"
     ]
 
-    letters = letters_de
+    letters = letters_de_alt
 
     _x = cnt_x
     _y = 1
@@ -370,8 +370,8 @@ print(f"mn_nut_height = {(nm_hole_dy-size_y)/2}")
 
 def diffusor(dx, dy):
     _box = Box(
-        dx - 2*wall_th - tol, 
-        dy - 2*wall_th - tol, 
+        dx - 2*wall_th - tol/2, 
+        dy - 2*wall_th - tol/2, 
         grid_height - 8
         )
     _ce = _box.edges().filter_by(Axis.Z)
