@@ -32,3 +32,4 @@ https://github.com/ESPWortuhr/Multilayout-ESP-Wordclock
 
 Wenn man wie ich einen Wemos D1 Mini lite benutzt, muss man die platformio.ini Datei ergänzen, das habe ich in meinem Fork hier gemacht:
 
+https://github.com/fex42/Multilayout-ESP-Wordclock/tree/wemos-d1-lite
