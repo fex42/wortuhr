@@ -29,7 +29,22 @@ cled_dy = led_dy * cnt_y + corner_dy
 cled_offset_x = 5 # X offset of corner led to middle (LED, not hole)
 cled_offset_y = 3 # Y offset of corner led to middle (LED, not hole)
 
-gen = LetterGenerator()
+gen = LetterGenerator(
+    cnt_x = cnt_x, 
+    cnt_y = cnt_y,
+    letters = [
+            "ESKISTLFÜNF",
+            "ZEHNZWANZIG",
+            "DREIVIERTEL",
+            "NACHAPPYVOR",
+            "HALBIRTHDAY",
+            "DRZWÖLFÜNFX",
+            "ZEHNEUNDREI",
+            "ZWEINSIEBEN",
+            "ELFVIERACHT",
+            "SECHSIUHRYE"
+        ]
+)
 
 corner_led_dia = 4.5 # diameter of corner/minute LED hole
 

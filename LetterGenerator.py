@@ -4,10 +4,26 @@ class LetterGenerator:
 
     def __init__(self,
         cnt_x = 11, # number of letters in a row
-        cnt_y = 10 # number of letter rows
+        cnt_y = 10, # number of letter rows
+        letters = [
+            "ESKISTRFÜNF",
+            "ZEHNZWANZIG",
+            "DREIVIERTEL",
+            "TGNACHVORUM",
+            "HALBGZWÖLFJ",
+            "ZWEINSIEBEN",
+            "KDREIRHFÜNF",
+            "ELFNEUNVIER",
+            "NACHTZEHNBX",
+            "USECHSFUHRY"
+        ]
     ):
         self.cnt_x = cnt_x
         self.cnt_y = cnt_y
+        self.letters = letters
+        self._x = self.cnt_x
+        self._y = 1
+
         letters_fr = [
             "ILNESTODEUX",
             "QUATRETROIS",
@@ -60,10 +76,7 @@ class LetterGenerator:
             "TENSEOCLOCK"
         ]
 
-        self.letters = letters_de_alt
 
-        self._x = self.cnt_x
-        self._y = 1
 
     def next_char(self):
         c = self.letters[self._y-1][self._x-1]
