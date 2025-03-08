@@ -3,6 +3,7 @@ set_port(3939)
 from build123d import *
 from math import *
 from RoundCornerCase import RoundCornerCase
+from LetterGenerator import LetterGenerator
 from Foot import Foot
 
 mt = 0.001
@@ -27,77 +28,6 @@ cled_dx = led_dx * cnt_x + corner_dx
 cled_dy = led_dy * cnt_y + corner_dy
 cled_offset_x = 5 # X offset of corner led to middle (LED, not hole)
 cled_offset_y = 3 # Y offset of corner led to middle (LED, not hole)
-
-class LetterGenerator:
-    """A generator for the letters that respect the order of GridLocations"""
-
-    letters_fr = [
-        "ILNESTODEUX",
-        "QUATRETROIS",
-        "NEUFUNESEPT",
-        "HUITSIXCINQ",
-        "MIDIXMINUIT",
-        "ONZERHEURES",
-        "MOINSOLEDIX",
-        "ETRQUARTPMD",
-        "VINGT-CINQU",
-        "ETSDEMIEPAM"
-    ]
-
-    letters_de_alt = [
-        "ESKISTLFÜNF",
-        "ZEHNZWANZIG",
-        "DREIVIERTEL",
-        "NACHAPPYVOR",
-        "HALBIRTHDAY",
-        "DRZWÖLFÜNFX",
-        "ZEHNEUNDREI",
-        "ZWEINSIEBEN",
-        "ELFVIERACHT",
-        "SECHSIUHRYE"
-    ]
-
-    letters_de = [
-        "ESKISTRFÜNF",
-        "ZEHNZWANZIG",
-        "DREIVIERTEL",
-        "TGNACHVORUM",
-        "HALBGZWÖLFJ",
-        "ZWEINSIEBEN",
-        "KDREIRHFÜNF",
-        "ELFNEUNVIER",
-        "NACHTZEHNBX",
-        "USECHSFUHRY"
-    ]
-
-    letters_en = [
-        "ITLISASAMPM",
-        "ACQUARTERDC",
-        "TWENTYFIVEX",
-        "HALFSTENFTO",
-        "PASTERUNINE",
-        "ONESIXTHREE",
-        "FOURFIVETWO",
-        "EIGHTELEVEN",
-        "SEVENTWELVE",
-        "TENSEOCLOCK"
-    ]
-
-    letters = letters_de_alt
-
-    _x = cnt_x
-    _y = 1
-
-    def next_char(self):
-        c = self.letters[self._y-1][self._x-1]
-#        print(f"next_char(x = {self._x}, y={self._y}) -> {c}")
-        self._y += 1
-        if self._y > cnt_y:
-            self._y = 1
-            self._x -= 1
-        if self._x <= 0:
-            self._x = cnt_x
-        return c
 
 gen = LetterGenerator()
 
