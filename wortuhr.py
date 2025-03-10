@@ -67,17 +67,56 @@ mag_dy = box_y - 2 * wall_th - screw_box_size
 # Front
 ##########################################################
 
+letters_de = [
+    "ESKISTRFÜNF",
+    "ZEHNZWANZIG",
+    "DREIVIERTEL",
+    "TGNACHVORUM",
+    "HALBGZWÖLFJ",
+    "ZWEINSIEBEN",
+    "KDREIRHFÜNF",
+    "ELFNEUNVIER",
+    "NACHTZEHNBX",
+    "USECHSFUHRY"
+    ]
+
 letters_de_alt = [
-        "ESKISTLFÜNF",
-        "ZEHNZWANZIG",
-        "DREIVIERTEL",
-        "NACHAPPYVOR",
-        "HALBIRTHDAY",
-        "DRZWÖLFÜNFX",
-        "ZEHNEUNDREI",
-        "ZWEINSIEBEN",
-        "ELFVIERACHT",
-        "SECHSIUHRYE"
+    "ESKISTLFÜNF",
+    "ZEHNZWANZIG",
+    "DREIVIERTEL",
+    "NACHAPPYVOR",
+    "HALBIRTHDAY",
+    "DRZWÖLFÜNFX",
+    "ZEHNEUNDREI",
+    "ZWEINSIEBEN",
+    "ELFVIERACHT",
+    "SECHSIUHRYE"
+    ]
+
+letters_fr = [
+    "ILNESTODEUX",
+    "QUATRETROIS",
+    "NEUFUNESEPT",
+    "HUITSIXCINQ",
+    "MIDIXMINUIT",
+    "ONZERHEURES",
+    "MOINSOLEDIX",
+    "ETRQUARTPMD",
+    "VINGT-CINQU",
+    "ETSDEMIEPAM"
+    ]
+
+letters_en = [
+    "ITLISASAMPM",
+    "ACQUARTERDC",
+    "TWENTYFIVEX",
+    "HALFSTENFTO",
+    "PASTERUNINE",
+    "ONESIXTHREE",
+    "FOURFIVETWO",
+    "EIGHTELEVEN",
+    "SEVENTWELVE",
+    "TENSEOCLOCK"
     ]
 
 gen = LetterGenerator(
