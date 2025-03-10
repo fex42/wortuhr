@@ -29,23 +29,6 @@ cled_dy = led_dy * cnt_y + corner_dy
 cled_offset_x = 5 # X offset of corner led to middle (LED, not hole)
 cled_offset_y = 3 # Y offset of corner led to middle (LED, not hole)
 
-gen = LetterGenerator(
-    cnt_x = cnt_x, 
-    cnt_y = cnt_y,
-    letters = [
-            "ESKISTLFÜNF",
-            "ZEHNZWANZIG",
-            "DREIVIERTEL",
-            "NACHAPPYVOR",
-            "HALBIRTHDAY",
-            "DRZWÖLFÜNFX",
-            "ZEHNEUNDREI",
-            "ZWEINSIEBEN",
-            "ELFVIERACHT",
-            "SECHSIUHRYE"
-        ]
-)
-
 corner_led_dia = 4.5 # diameter of corner/minute LED hole
 
 # magnets joining back and front
@@ -83,6 +66,25 @@ mag_dy = box_y - 2 * wall_th - screw_box_size
 ##########################################################
 # Front
 ##########################################################
+
+letters_de_alt = [
+        "ESKISTLFÜNF",
+        "ZEHNZWANZIG",
+        "DREIVIERTEL",
+        "NACHAPPYVOR",
+        "HALBIRTHDAY",
+        "DRZWÖLFÜNFX",
+        "ZEHNEUNDREI",
+        "ZWEINSIEBEN",
+        "ELFVIERACHT",
+        "SECHSIUHRYE"
+    ]
+
+gen = LetterGenerator(
+    cnt_x = cnt_x, 
+    cnt_y = cnt_y,
+    letters = letters_de_alt
+)
 
 def magnetLocations():
     return Locations(
@@ -163,11 +165,10 @@ def frontPanel():
 
     return front
 
-
-
 ###########################################################
 ## Back
 ###########################################################
+
 def meltNutLocations():
     x_top = mn_hole_dx/2
     x_btn = mn_hole_dx*1.6
@@ -254,7 +255,6 @@ def backside():
 ## Controller case base
 ###########################################################
 
-
 case_height = 28.0
 
 # case outer size
@@ -303,7 +303,6 @@ def caseCover():
                         screw_hole_dia=mnut_dia,
                         screw_hole_dep=mnut_height
                         ).cover()
-
 
 print(f"size_x = {size_x}") 
 print(f"size_y = {size_y}")
