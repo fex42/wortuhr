@@ -367,7 +367,7 @@ def diffusor(dx, dy):
     _tf = _box.faces().sort_by(Axis.Z).last
     return offset(_box, openings = _tf, amount=0.4)
 
-showFront = False
+showFront = True
 showBack = True
 showCase = False
 showCover = False
