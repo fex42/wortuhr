@@ -52,8 +52,8 @@ nm_hole_dy = (cnt_y-2) * led_dy
 
 border = 0 # border size (including tolerance for back)
 
-box_x = cnt_x * led_dx + 2 * corner_dx + 2 * wall_th
-box_y = cnt_y * led_dy + 2 * corner_dy + 2 * wall_th
+box_x = cnt_x * led_dx + 2 * corner_dx + wall_th
+box_y = cnt_y * led_dy + 2 * corner_dy + wall_th
 
 # X/Y size over all
 size_x = 2*border + box_x
