@@ -137,7 +137,7 @@ def magnetLocations():
 
 
 def frontPanel():
-    front = Box(size_x, size_y, front_th + diffusor_th,
+    front = Box(size_x + wall_th/2, size_y + wall_th/2, front_th + diffusor_th,
                 align=(Align.CENTER, Align.CENTER, Align.MAX))
     txt_pl = Plane(front.faces().sort_by(Axis.Z).last)
 
@@ -177,7 +177,10 @@ def frontPanel():
     front += extrude(cboxes_sk, grid_height - 2)
 
     # outer box wall
-    outer_wall_sk = Rectangle(box_x + wall_th/2, box_y + wall_th/2) - Rectangle(box_x - 2 * wall_th, box_y - 2 * wall_th)
+    outer_wall_sk = (
+        Rectangle(box_x + wall_th/2, box_y + wall_th/2) - 
+        Rectangle(box_x - 2 * wall_th, box_y - 2 * wall_th)
+        )
     front += extrude(outer_wall_sk, grid_height + mag_dep + back_th + 2)
 
 
@@ -284,10 +287,8 @@ def backside():
     ] 
     back -= extrude(mn_sk, -mnut_height*2)
 
-
-
     # cable holes
-    ch_loc = GridLocations(24, mag_dy - 24, 1, 2)
+    ch_loc = Locations((0, mag_dy/2 - 12))
     cab_sk = Sketch() + [
         loc * Rectangle(6,4)
         for loc in ch_loc
