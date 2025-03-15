@@ -233,6 +233,10 @@ def backside():
     ]
     back += extrude(mag_sk, mag_dep + 1)
 
+    # outer wall of back plane
+    owall_sk = Rectangle(back_x, back_y) - Rectangle(back_x - 2*wall_th, back_y - 2*wall_th)
+    back += extrude(owall_sk, 2)
+
     back -= Plane.XY.offset(-back_th) * magnetLocations() * CounterBoreHole(radius= mnut_screw_dia/2,
         counter_bore_radius = 3.1, counter_bore_depth=2,
         depth = back_th + mag_dep + 2).mirror(Plane.XY)
@@ -279,6 +283,8 @@ def backside():
         for loc in mn_locs
     ] 
     back -= extrude(mn_sk, -mnut_height*2)
+
+
 
     # cable holes
     ch_loc = GridLocations(24, mag_dy - 24, 1, 2)
@@ -361,8 +367,8 @@ def diffusor(dx, dy):
     _tf = _box.faces().sort_by(Axis.Z).last
     return offset(_box, openings = _tf, amount=0.4)
 
-showFront = True
-showBack = False
+showFront = False
+showBack = True
 showCase = False
 showCover = False
 showFoot = False
