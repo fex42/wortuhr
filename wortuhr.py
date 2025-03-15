@@ -52,8 +52,8 @@ nm_hole_dy = (cnt_y-2) * led_dy
 
 border = 0 # border size (including tolerance for back)
 
-box_x = cnt_x * led_dx + 2 * corner_dx + wall_th
-box_y = cnt_y * led_dy + 2 * corner_dy + wall_th
+box_x = cnt_x * led_dx + 2 * corner_dx + 2 * wall_th
+box_y = cnt_y * led_dy + 2 * corner_dy + 2 * wall_th
 
 # X/Y size over all
 size_x = 2*border + box_x
@@ -176,9 +176,8 @@ def frontPanel():
     ]
     front += extrude(cboxes_sk, grid_height - 2)
 
-
     # outer box wall
-    outer_wall_sk = Rectangle(box_x, box_y) - Rectangle(box_x - 2 * wall_th, box_y - 2 * wall_th)
+    outer_wall_sk = Rectangle(box_x, box_y) - Rectangle(box_x - 3 * wall_th, box_y - 3 * wall_th)
     front += extrude(outer_wall_sk, grid_height + mag_dep + back_th + 2)
 
 
@@ -363,11 +362,11 @@ def diffusor(dx, dy):
     return offset(_box, openings = _tf, amount=0.4)
 
 showFront = True
-showBack = True
-showCase = True
-showCover = True
-showFoot = True
-showDiffusor = True
+showBack = False
+showCase = False
+showCover = False
+showFoot = False
+showDiffusor = False
 
 nix = Box(tol,tol,tol)
 
