@@ -80,6 +80,19 @@ letters_de = [
     "USECHSFUHRY"
     ]
 
+letters_de_bay = [
+    "ETZKISTFÜNF",
+    "ZEHNEZWANZG",
+    "DREIVIERTLE",
+    "JTNOCHVORXM",
+    "HOIBEPZDREI",
+    "ZWOANSSIEME",
+    "KACHTEFÜNFE",
+    "NEINEVIEREQ",
+    "ZWOIFEZEHNE",
+    "YSECHSEFUHR"
+    ]
+
 letters_de_alt = [
     "ESKISTLFÜNF",
     "ZEHNZWANZIG",
@@ -122,7 +135,7 @@ letters_en = [
 gen = LetterGenerator(
     cnt_x = cnt_x, 
     cnt_y = cnt_y,
-    letters = letters_de_alt
+    letters = letters_de_bay
 )
 
 def magnetLocations():
@@ -212,7 +225,7 @@ def frontPanel():
 
 def meltNutLocations():
     x_top = mn_hole_dx/2
-    x_btn = mn_hole_dx*1.6
+    x_btn = mn_hole_dx*1.68
 
     return Locations(
         (-x_top, nm_hole_dy/2),
@@ -273,7 +286,6 @@ def backside():
     back -= extrude(c1g_sk, -led_stripe_h/4)
 
     # melting nut holes
-    #mn_locs = GridLocations(mn_hole_dx, nm_hole_dy, 4, 2)
     mn_locs = meltNutLocations()
 
     mn_sk = Sketch() + [
@@ -370,10 +382,10 @@ def diffusor(dx, dy):
 
 showFront = True
 showBack = True
-showCase = False
-showCover = False
-showFoot = False
-showDiffusor = False
+showCase = True
+showCover = True
+showFoot = True
+showDiffusor = True
 
 nix = Box(tol,tol,tol)
 
