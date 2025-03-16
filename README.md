@@ -8,11 +8,19 @@ Um die Wortuhr zu bauen, druckt man die entstehenden Teile. Mehrfach zu druckend
 
 # Hinweise zum Druck der Frontplatte
 
-Ich habe die Frontplatte in drei Varianten gedruckt. Man kann die ersten beiden Schichten weiß oder durchsichtig drucken (Pause oder Farbwechsel vor der 3. Schicht einfügen), dann sollte man den Parameter "diffusor_th" auf 0,4 erhöhen, damit er zwei Schichten umfasst. Am besten gefällt mir der Druck, bei der die erste Schicht 0,2mm schwarzem PLA ist. Die Schicht ist dann so dünn, dass die LEDs durchscheinen, aber dunkle Buchstaben sind gar nicht zu sehen sind.
+Ich habe die Frontplatte in drei Varianten gedruckt:
 
-Druckt man die ersten beiden Schichten mit weißem PLA, dann braucht man keine Diffusoren drucken, die sind nur nötig, wenn man durchsichtiges oder komplett in Schwarz druckt und werden von den Innenseite einfach eingesteckt. Kleben ist bei mir nicht nötig, kommt aber ggf. auf den Drucker bzw. die Filamentkalibrierung an.
+- erste zwei Schichten (0,4mm) mit weißem PLA
+- erste zwei Schichten (0,4mm) mit transparentem PLA
+- erste Schicht (0,2mm) mit schwarzem PLA, Rest auch
 
-Will man die erste(n) Schichten homogen durchgängig drucken, kann man das im (Orca-)Slicer mit einer Modifier-Box erreichen, bei der man die Anzahl von Top-Layern auf 0 stellt. Macht man das nicht, generiert der Slicer einen Druck, wo die zweite Schicht zwar durchgehend ist, um die Buchstaben aber Wandlinien gedruckt sind, was man als Artefakte erkennen kann.
+Am besten gefällt mir der Druck, bei der die erste Schicht 0,2mm schwarzem PLA ist. Die Schicht ist dann so dünn, dass die LEDs durchscheinen, aber dunkle Buchstaben sind gar nicht zu sehen sind. Dies funktioniert aber nur mit einer Druckplatte, die glatt oder nur ganz wenig texturiert ist, da sonst die Buchstaben nicht durchscheinen.
+
+Für den Farbwechsel der anderen beiden Varianten fügt man im Slicer eine Pause oder einen Farbwechsel vor der 3. Schicht ein. Zudem sollte man den Parameter "diffusor_th" auf 0,4 stellen, damit die ersten beiden Schichten massiv sind.
+
+Druckt man die ersten beiden Schichten mit weißem PLA, dann braucht man keine Diffusoren drucken, die sind nur nötig, wenn man durchsichtiges oder komplett in Schwarz druckt und werden von den Innenseite einfach eingesteckt. Kleben ist bei mir nicht nötig, nur die vier Minuten-Ecken sitzen etwas lockerer, hier ggf. die Diffusoren mit einem Tropfen Sekundenkleber fixieren.
+
+Will man die erste(n) Schichten homogen durchgängig drucken, kann man das im Orca-Slicer mit einer Modifier-Box erreichen, bei der man die Anzahl von Top-Layern auf 0 stellt. Macht man das nicht, generiert der Slicer einen Druck, wo die zweite Schicht zwar durchgehend ist, um die Buchstaben aber Wandlinien gedruckt sind, was man als Artefakte erkennen kann.
 
 ## Liste zusätzlich benötigter Teile
 
