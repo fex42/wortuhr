@@ -371,14 +371,14 @@ print(f"mn_nut_height = {(nm_hole_dy-size_y)/2}")
 
 def diffusor(dx, dy):
     _box = Box(
-        dx - 2*wall_th - tol/2, 
-        dy - 2*wall_th - tol/2, 
+        dx - wall_th - tol, 
+        dy - wall_th - tol, 
         grid_height - 8
         )
     _ce = _box.edges().filter_by(Axis.Z)
     _box = fillet(_ce, radius=1.0)
     _tf = _box.faces().sort_by(Axis.Z).last
-    return offset(_box, openings = _tf, amount=0.4)
+    return offset(_box, openings = _tf, amount=-0.4)
 
 showFront = True
 showBack = True
