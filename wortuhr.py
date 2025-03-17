@@ -371,8 +371,8 @@ print(f"mn_nut_height = {(nm_hole_dy-size_y)/2}")
 
 def diffusor(dx, dy):
     _box = Box(
-        dx - wall_th - tol, 
-        dy - wall_th - tol, 
+        dx - wall_th - 2*tol, 
+        dy - wall_th - 2*tol, 
         grid_height - 8
         )
     _ce = _box.edges().filter_by(Axis.Z)
@@ -440,4 +440,4 @@ export("wortuhr-case-usbc2", case)
 export("wortuhr-cover", cover)
 export("wortuhr-foot_x2", foot)
 export("letter-diffusor_x110", diffusor1)
-export("letter-diffusor_x4", diffusor1)
+export("letter-diffusor_x4", diffusor2)
